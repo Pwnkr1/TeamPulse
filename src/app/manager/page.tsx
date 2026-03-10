@@ -15,6 +15,7 @@ import {
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -95,18 +96,18 @@ export default function ManagerDashboard() {
             <p className="text-sm font-semibold text-white">Problems by Category</p>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={PROBLEM_CATEGORY_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+            <BarChart data={PROBLEM_CATEGORY_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 36 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="name" tick={{ fill: "#64748B", fontSize: 10 }} tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" tick={{ fill: "#64748B", fontSize: 9 }} tickLine={false} axisLine={false} />
               <YAxis tick={{ fill: "#64748B", fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{ background: "rgba(6,12,28,0.95)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: "#E2E8F0" }}
                 cursor={{ fill: "rgba(139,92,246,0.06)" }}
               />
-              <Bar dataKey="value" fill="#8B5CF6" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {PROBLEM_CATEGORY_DATA.map((entry, idx) => (
-                  <rect key={idx} fill={entry.fill} />
+                  <Cell key={idx} fill={entry.fill} />
                 ))}
               </Bar>
             </BarChart>
