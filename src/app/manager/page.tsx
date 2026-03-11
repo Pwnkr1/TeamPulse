@@ -26,28 +26,36 @@ import {
   PolarAngleAxis,
   Radar,
 } from "recharts";
-import {
-  TEAM_MEMBERS,
-  PROBLEM_CATEGORY_DATA,
-  MINDSET_RADAR,
-  SENTIMENT_CONFIG,
-  CATEGORY_LABELS,
-  ACTION_ITEMS,
-} from "@/lib/mockData";
+import { SENTIMENT_CONFIG, CATEGORY_LABELS } from "@/lib/mockData";
+import { api } from "@/lib/api";
+
+interface Stats { totalProblems: number; completionRate: number; avgScore: number; blockedCount: number; }
+interface TeamMember { id: string; name: string; avatar: string; role: string; team: string; problemsCount: number; surveysDone: number; surveysTotal: number; sentiment: string; categories: string[]; score: number; }
+interface ChartItem { name: string; value: number; fill: string; }
+interface RadarItem { subject: string; A: number; fullMark: number; }
+interface ActionItem { id: string; title: string; assignee: { name: string; avatar: string }; priority: string; status: string; dueDate: string; }
 
 export default function ManagerDashboard() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [stats, setStats] = useState<Stats>({ totalProblems: 0, completionRate: 0, avgScore: 0, blockedCount: 0 });
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [categoryData, setCategoryData] = useState<ChartItem[]>([]);
+  const [radarData, setRadarData] = useState<RadarItem[]>([]);
+  const [actions, setActions] = useState<ActionItem[]>([]);
 
-  const totalProblems = TEAM_MEMBERS.reduce((a, m) => a + m.problemsCount, 0);
-  const totalSurveys = TEAM_MEMBERS.reduce((a, m) => a + m.surveysTotal, 0);
-  const totalDone = TEAM_MEMBERS.reduce((a, m) => a + m.surveysDone, 0);
-  const completionRate = Math.round((totalDone / totalSurveys) * 100);
-  const avgScore = Math.round(TEAM_MEMBERS.reduce((a, m) => a + m.score, 0) / TEAM_MEMBERS.length);
-  const blocked = TEAM_MEMBERS.filter((m) => m.sentiment === "blocked").length;
+  useEffect(() => {
+    setMounted(true);
+    api.get<Stats>("/api/manager/stats").then(setStats).catch(() => {});
+    api.get<{ team: TeamMember[] }>("/api/manager/team").then((d) => setTeam(d.team)).catch(() => {});
+    api.get<{ data: ChartItem[] }>("/api/manager/chart/categories").then((d) => setCategoryData(d.data)).catch(() => {});
+    api.get<{ data: RadarItem[] }>("/api/manager/chart/radar").then((d) => setRadarData(d.data)).catch(() => {});
+    api.get<{ actions: ActionItem[] }>("/api/actions").then((d) => setActions(d.actions)).catch(() => {});
+  }, []);
 
   if (!mounted) return null;
+
+  const pColors: Record<string, string> = { high: "#EF4444", medium: "#F59E0B", low: "#10B981" };
 
   return (
     <div className="animate-fade-in">
@@ -60,16 +68,16 @@ export default function ManagerDashboard() {
         <h1 className="text-3xl font-bold text-white">
           Team <span className="text-gradient-purple">Overview</span>
         </h1>
-        <p className="text-slate-400 mt-1 text-sm">Sprint Week 10 · {TEAM_MEMBERS.length} engineers · Platform, Backend, Growth, Infra</p>
+        <p className="text-slate-400 mt-1 text-sm">Sprint Week 10 · {team.length} engineers</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Problems", value: totalProblems, icon: Brain, color: "#06B6D4", sub: "This sprint" },
-          { label: "Survey Completion", value: `${completionRate}%`, icon: ClipboardList, color: "#8B5CF6", sub: `${totalDone}/${totalSurveys} done` },
-          { label: "Avg Mindset Score", value: avgScore, icon: TrendingUp, color: "#10B981", sub: "Out of 100" },
-          { label: "Blocked Engineers", value: blocked, icon: AlertTriangle, color: "#EF4444", sub: "Needs attention" },
+          { label: "Total Problems", value: stats.totalProblems, icon: Brain, color: "#06B6D4", sub: "This sprint" },
+          { label: "Survey Completion", value: `${stats.completionRate}%`, icon: ClipboardList, color: "#8B5CF6", sub: "Overall" },
+          { label: "Avg Mindset Score", value: stats.avgScore, icon: TrendingUp, color: "#10B981", sub: "Out of 100" },
+          { label: "Blocked Engineers", value: stats.blockedCount, icon: AlertTriangle, color: "#EF4444", sub: "Needs attention" },
         ].map((s) => (
           <div key={s.label} className="card-purple p-5">
             <div className="flex items-start justify-between mb-3">
@@ -89,14 +97,13 @@ export default function ManagerDashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-2 gap-5 mb-8">
-        {/* Problems by category */}
         <div className="card-purple p-5">
           <div className="flex items-center gap-2 mb-4">
             <BarChart2 size={15} className="text-violet-400" />
             <p className="text-sm font-semibold text-white">Problems by Category</p>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={PROBLEM_CATEGORY_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 36 }}>
+            <BarChart data={categoryData} margin={{ top: 0, right: 0, left: -20, bottom: 36 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
               <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" tick={{ fill: "#64748B", fontSize: 9 }} tickLine={false} axisLine={false} />
               <YAxis tick={{ fill: "#64748B", fontSize: 10 }} tickLine={false} axisLine={false} />
@@ -106,7 +113,7 @@ export default function ManagerDashboard() {
                 cursor={{ fill: "rgba(139,92,246,0.06)" }}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {PROBLEM_CATEGORY_DATA.map((entry, idx) => (
+                {categoryData.map((entry, idx) => (
                   <Cell key={idx} fill={entry.fill} />
                 ))}
               </Bar>
@@ -114,14 +121,13 @@ export default function ManagerDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* Mindset radar */}
         <div className="card-purple p-5">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp size={15} className="text-violet-400" />
             <p className="text-sm font-semibold text-white">Team Mindset Radar</p>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <RadarChart data={MINDSET_RADAR}>
+            <RadarChart data={radarData}>
               <PolarGrid stroke="rgba(255,255,255,0.06)" />
               <PolarAngleAxis dataKey="subject" tick={{ fill: "#64748B", fontSize: 10 }} />
               <Radar name="Team" dataKey="A" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.2} strokeWidth={2} />
@@ -148,21 +154,17 @@ export default function ManagerDashboard() {
           </button>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {TEAM_MEMBERS.map((m) => {
-            const sentiment = SENTIMENT_CONFIG[m.sentiment];
-            const pct = Math.round((m.surveysDone / m.surveysTotal) * 100);
+          {team.map((m) => {
+            const sentiment = SENTIMENT_CONFIG[m.sentiment as keyof typeof SENTIMENT_CONFIG] ?? SENTIMENT_CONFIG.neutral;
+            const pct = m.surveysTotal > 0 ? Math.round((m.surveysDone / m.surveysTotal) * 100) : 0;
             return (
               <div key={m.id} className="card-purple p-4 cursor-pointer" onClick={() => router.push("/manager/insights")}>
                 <div className="flex items-start gap-3 mb-3">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                    style={{
-                      background: "rgba(139,92,246,0.15)",
-                      border: "1px solid rgba(139,92,246,0.3)",
-                      color: "#A78BFA",
-                    }}
+                    style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}
                   >
-                    {m.avatar}
+                    {m.avatar ?? m.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-white truncate">{m.name}</p>
@@ -221,33 +223,28 @@ export default function ManagerDashboard() {
           </button>
         </div>
         <div className="space-y-2">
-          {ACTION_ITEMS.filter((a) => a.status !== "done")
-            .slice(0, 3)
-            .map((a) => {
-              const pColors = { high: "#EF4444", medium: "#F59E0B", low: "#10B981" };
-              return (
-                <div key={a.id} className="card-purple p-4 flex items-center gap-4">
-                  <div
-                    className="w-2 h-2 rounded-full shrink-0"
-                    style={{ background: pColors[a.priority], boxShadow: `0 0 6px ${pColors[a.priority]}80` }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{a.title}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">→ {a.assignee} · Due {new Date(a.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
-                  </div>
-                  <span
-                    className="badge capitalize shrink-0"
-                    style={
-                      a.status === "in_progress"
-                        ? { background: "rgba(139,92,246,0.15)", color: "#A78BFA", border: "1px solid rgba(139,92,246,0.3)" }
-                        : { background: "rgba(148,163,184,0.08)", color: "#64748B", border: "1px solid rgba(148,163,184,0.12)" }
-                    }
-                  >
-                    {a.status.replace("_", " ")}
-                  </span>
-                </div>
-              );
-            })}
+          {actions.filter((a) => a.status !== "done").slice(0, 3).map((a) => (
+            <div key={a.id} className="card-purple p-4 flex items-center gap-4">
+              <div
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{ background: pColors[a.priority] ?? "#94A3B8", boxShadow: `0 0 6px ${pColors[a.priority] ?? "#94A3B8"}80` }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{a.title}</p>
+                <p className="text-xs text-slate-500 mt-0.5">→ {a.assignee.name} · Due {new Date(a.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+              </div>
+              <span
+                className="badge capitalize shrink-0"
+                style={
+                  a.status === "in_progress"
+                    ? { background: "rgba(139,92,246,0.15)", color: "#A78BFA", border: "1px solid rgba(139,92,246,0.3)" }
+                    : { background: "rgba(148,163,184,0.08)", color: "#64748B", border: "1px solid rgba(148,163,184,0.12)" }
+                }
+              >
+                {a.status.replace("_", " ")}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

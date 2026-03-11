@@ -11,13 +11,16 @@ import {
   ChevronDown,
   User,
   Calendar,
+  Loader2,
 } from "lucide-react";
-import { ACTION_ITEMS, CATEGORY_LABELS, type ActionItem } from "@/lib/mockData";
+import { CATEGORY_LABELS } from "@/lib/mockData";
+import { api } from "@/lib/api";
 
 const STATUS_CONFIG = {
   todo: { label: "To Do", color: "#94A3B8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.2)", icon: Circle },
   in_progress: { label: "In Progress", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.25)", icon: Clock },
   done: { label: "Done", color: "#10B981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)", icon: CheckCircle2 },
+  completed: { label: "Done", color: "#10B981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)", icon: CheckCircle2 },
 };
 
 const PRIORITY_CONFIG = {
@@ -26,19 +29,33 @@ const PRIORITY_CONFIG = {
   low: { color: "#10B981", label: "Low" },
 };
 
-function ActionCard({ item, onStatusChange }: { item: ActionItem; onStatusChange: (id: string, status: ActionItem["status"]) => void }) {
+type StatusKey = "todo" | "in_progress" | "done";
+
+interface ApiAction {
+  id: string;
+  title: string;
+  description: string;
+  assignee: { name: string; avatar: string };
+  priority: string;
+  status: string;
+  dueDate: string;
+  category: string;
+  sourceRef?: string;
+}
+
+function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange: (id: string, status: StatusKey) => void }) {
   const [open, setOpen] = useState(false);
-  const st = STATUS_CONFIG[item.status];
-  const pr = PRIORITY_CONFIG[item.priority];
+  const statusKey = (item.status === "completed" ? "done" : item.status) as keyof typeof STATUS_CONFIG;
+  const st = STATUS_CONFIG[statusKey] ?? STATUS_CONFIG.todo;
+  const pr = PRIORITY_CONFIG[item.priority as keyof typeof PRIORITY_CONFIG] ?? PRIORITY_CONFIG.medium;
   const Icon = st.icon;
 
   return (
     <div
       className="rounded-xl overflow-hidden transition-all"
-      style={{ background: "rgba(8,6,28,0.85)", border: `1px solid ${item.status === "done" ? "rgba(16,185,129,0.15)" : "rgba(139,92,246,0.15)"}` }}
+      style={{ background: "rgba(8,6,28,0.85)", border: `1px solid ${statusKey === "done" ? "rgba(16,185,129,0.15)" : "rgba(139,92,246,0.15)"}` }}
     >
       <div className="p-4 flex items-start gap-3">
-        {/* Priority indicator */}
         <div
           className="w-1.5 rounded-full shrink-0 mt-1"
           style={{ height: 40, background: pr.color, boxShadow: `0 0 8px ${pr.color}60` }}
@@ -47,14 +64,11 @@ function ActionCard({ item, onStatusChange }: { item: ActionItem; onStatusChange
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className="badge"
-                style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}` }}
-              >
+              <span className="badge" style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}` }}>
                 <Icon size={9} className="inline mr-1" />
                 {st.label}
               </span>
-              <span className="badge badge-purple">{CATEGORY_LABELS[item.category]}</span>
+              <span className="badge badge-purple">{CATEGORY_LABELS[item.category] ?? item.category}</span>
               <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ color: pr.color, background: `${pr.color}12` }}>
                 {pr.label} Priority
               </span>
@@ -65,29 +79,28 @@ function ActionCard({ item, onStatusChange }: { item: ActionItem; onStatusChange
 
           <div className="flex items-center gap-4 text-xs text-slate-500">
             <span className="flex items-center gap-1">
-              <User size={11} /> {item.assignee}
+              <User size={11} /> {item.assignee.name}
             </span>
             <span className="flex items-center gap-1">
               <Calendar size={11} />
               Due {new Date(item.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
-            <span className="text-slate-700">Source: {item.createdFrom}</span>
+            {item.sourceRef && <span className="text-slate-700">Source: {item.sourceRef}</span>}
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2 shrink-0">
-          {item.status !== "done" && (
+          {statusKey !== "done" && (
             <button
-              onClick={() => onStatusChange(item.id, item.status === "todo" ? "in_progress" : "done")}
+              onClick={() => onStatusChange(item.id, statusKey === "todo" ? "in_progress" : "done")}
               className="text-xs px-3 py-1.5 rounded-lg transition-all font-medium"
               style={{
-                background: item.status === "todo" ? "rgba(139,92,246,0.12)" : "rgba(16,185,129,0.12)",
-                color: item.status === "todo" ? "#A78BFA" : "#34D399",
-                border: `1px solid ${item.status === "todo" ? "rgba(139,92,246,0.25)" : "rgba(16,185,129,0.25)"}`,
+                background: statusKey === "todo" ? "rgba(139,92,246,0.12)" : "rgba(16,185,129,0.12)",
+                color: statusKey === "todo" ? "#A78BFA" : "#34D399",
+                border: `1px solid ${statusKey === "todo" ? "rgba(139,92,246,0.25)" : "rgba(16,185,129,0.25)"}`,
               }}
             >
-              {item.status === "todo" ? "Start" : "Complete"}
+              {statusKey === "todo" ? "Start" : "Complete"}
             </button>
           )}
           <button
@@ -109,26 +122,44 @@ function ActionCard({ item, onStatusChange }: { item: ActionItem; onStatusChange
 }
 
 export default function RetroActions() {
-  const [items, setItems] = useState(ACTION_ITEMS);
-  const [filter, setFilter] = useState<"all" | ActionItem["status"]>("all");
+  const [items, setItems] = useState<ApiAction[]>([]);
+  const [filter, setFilter] = useState<"all" | StatusKey>("all");
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    api.get<{ actions: ApiAction[] }>("/api/actions")
+      .then((d) => setItems(d.actions))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  function handleStatusChange(id: string, status: ActionItem["status"]) {
+  async function handleStatusChange(id: string, status: StatusKey) {
     setItems((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+    try {
+      await api.patch(`/api/actions/${id}`, { status });
+    } catch {
+      // revert on error
+      api.get<{ actions: ApiAction[] }>("/api/actions").then((d) => setItems(d.actions)).catch(() => {});
+    }
   }
 
-  const filtered = filter === "all" ? items : items.filter((a) => a.status === filter);
-  const todo = items.filter((a) => a.status === "todo").length;
-  const inProgress = items.filter((a) => a.status === "in_progress").length;
-  const done = items.filter((a) => a.status === "done").length;
+  const normalizeStatus = (s: string): StatusKey =>
+    s === "completed" ? "done" : (s as StatusKey);
+
+  const filtered = filter === "all"
+    ? items
+    : items.filter((a) => normalizeStatus(a.status) === filter);
+
+  const todo = items.filter((a) => normalizeStatus(a.status) === "todo").length;
+  const inProgress = items.filter((a) => normalizeStatus(a.status) === "in_progress").length;
+  const done = items.filter((a) => normalizeStatus(a.status) === "done").length;
 
   if (!mounted) return null;
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           <Zap size={22} className="text-violet-400" />
@@ -139,18 +170,17 @@ export default function RetroActions() {
         </p>
       </div>
 
-      {/* Summary row */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {[
-          { label: "To Do", count: todo, color: "#94A3B8", bg: "rgba(148,163,184,0.08)" },
-          { label: "In Progress", count: inProgress, color: "#8B5CF6", bg: "rgba(139,92,246,0.08)" },
-          { label: "Done", count: done, color: "#10B981", bg: "rgba(16,185,129,0.08)" },
+          { label: "To Do", count: todo, color: "#94A3B8", bg: "rgba(148,163,184,0.08)", key: "todo" as StatusKey },
+          { label: "In Progress", count: inProgress, color: "#8B5CF6", bg: "rgba(139,92,246,0.08)", key: "in_progress" as StatusKey },
+          { label: "Done", count: done, color: "#10B981", bg: "rgba(16,185,129,0.08)", key: "done" as StatusKey },
         ].map((s) => (
           <div
             key={s.label}
             className="rounded-xl p-4 text-center cursor-pointer transition-all hover:scale-105"
             style={{ background: s.bg, border: `1px solid ${s.color}20` }}
-            onClick={() => setFilter(s.label.toLowerCase().replace(" ", "_") as ActionItem["status"])}
+            onClick={() => setFilter(s.key)}
           >
             <p className="text-2xl font-black mb-0.5" style={{ color: s.color }}>{s.count}</p>
             <p className="text-xs text-slate-500">{s.label}</p>
@@ -158,7 +188,6 @@ export default function RetroActions() {
         ))}
       </div>
 
-      {/* Filter tabs */}
       <div className="flex items-center gap-2 mb-5">
         <Filter size={14} className="text-slate-500" />
         {(["all", "todo", "in_progress", "done"] as const).map((f) => (
@@ -178,23 +207,27 @@ export default function RetroActions() {
         <span className="ml-auto text-xs text-slate-600">{filtered.length} items</span>
       </div>
 
-      {/* Action items */}
-      <div className="space-y-3">
-        {filtered.length === 0 && (
-          <div
-            className="rounded-xl p-10 text-center"
-            style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}
-          >
-            <CheckCircle2 size={32} className="text-green-400 mx-auto mb-3" />
-            <p className="text-slate-400 text-sm">No items in this category.</p>
-          </div>
-        )}
-        {filtered.map((item) => (
-          <ActionCard key={item.id} item={item} onStatusChange={handleStatusChange} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={24} className="animate-spin text-violet-400" />
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filtered.length === 0 && (
+            <div
+              className="rounded-xl p-10 text-center"
+              style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}
+            >
+              <CheckCircle2 size={32} className="text-green-400 mx-auto mb-3" />
+              <p className="text-slate-400 text-sm">No items in this category.</p>
+            </div>
+          )}
+          {filtered.map((item) => (
+            <ActionCard key={item.id} item={item} onStatusChange={handleStatusChange} />
+          ))}
+        </div>
+      )}
 
-      {/* Legend */}
       <div
         className="mt-8 rounded-xl p-4"
         style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.12)" }}

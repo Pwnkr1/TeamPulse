@@ -8,7 +8,6 @@ const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(['developer', 'manager']).default('developer'),
   team: z.string().optional(),
 });
 
@@ -25,6 +24,7 @@ function signToken(userId: string, role: string, email: string): string {
   );
 }
 
+// Registration now creates a RegistrationRequest (pending manager approval)
 export async function register(req: Request, res: Response): Promise<void> {
   const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -32,25 +32,37 @@ export async function register(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { name, email, password, role, team } = parsed.data;
+  const { name, email, password, team } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
+  // Check if already a real user
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
     res.status(409).json({ error: 'Email already registered' });
     return;
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
-  const avatar = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+  // Check if there's already a pending/rejected request
+  const existingReq = await prisma.registrationRequest.findUnique({ where: { email } });
+  if (existingReq) {
+    if (existingReq.status === 'pending') {
+      res.status(409).json({ error: 'A registration request for this email is already pending approval.' });
+      return;
+    }
+    if (existingReq.status === 'rejected') {
+      res.status(403).json({ error: 'Your previous registration request was denied. Please contact your manager.' });
+      return;
+    }
+  }
 
-  const user = await prisma.user.create({
-    data: { name, email, passwordHash, role, team, avatar },
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  await prisma.registrationRequest.create({
+    data: { name, email, passwordHash, role: 'developer', team },
   });
 
-  const token = signToken(user.id, user.role, user.email);
   res.status(201).json({
-    token,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar },
+    status: 'pending',
+    message: 'Registration request submitted. Awaiting manager approval.',
   });
 }
 
@@ -65,6 +77,16 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
+    // Check if they have a registration request
+    const regReq = await prisma.registrationRequest.findUnique({ where: { email } });
+    if (regReq?.status === 'pending') {
+      res.status(403).json({ error: 'pending', message: 'Your account is pending manager approval.' });
+      return;
+    }
+    if (regReq?.status === 'rejected') {
+      res.status(403).json({ error: 'rejected', message: 'Your account request was denied by the manager.' });
+      return;
+    }
     res.status(401).json({ error: 'Invalid credentials' });
     return;
   }

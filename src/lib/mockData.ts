@@ -637,7 +637,7 @@ export const MINDSET_RADAR = [
   { subject: "Learning", A: 76, fullMark: 100 },
 ];
 
-export const CATEGORY_LABELS: Record<ProblemCategory, string> = {
+export const CATEGORY_LABELS: Record<string, string> = {
   code_coupling: "Code Coupling",
   duplication: "Duplication",
   devops: "DevOps",

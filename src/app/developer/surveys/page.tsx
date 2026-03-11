@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ClipboardList,
   CheckCircle2,
@@ -11,8 +11,10 @@ import {
   X,
   Brain,
   ArrowRight,
+  Loader2,
 } from "lucide-react";
-import { MOCK_SURVEYS, CATEGORY_LABELS, type Survey, type SurveyQuestion } from "@/lib/mockData";
+import { CATEGORY_LABELS } from "@/lib/mockData";
+import { api } from "@/lib/api";
 
 const CAT_COLORS: Record<string, string> = {
   code_coupling: "#06B6D4",
@@ -23,31 +25,62 @@ const CAT_COLORS: Record<string, string> = {
   technical_debt: "#EF4444",
 };
 
+interface ApiSurveyListItem {
+  id: string;
+  title: string;
+  category: string;
+  status: "pending" | "completed" | "expired";
+  deadline: string;
+  completedAt?: string;
+  questionCount: number;
+}
+
+interface ApiQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  insightLabel: string;
+  orderIndex: number;
+}
+
+interface ApiFullSurvey extends ApiSurveyListItem {
+  questions: ApiQuestion[];
+}
+
 function SurveyModal({
   survey,
   onClose,
   onComplete,
 }: {
-  survey: Survey;
+  survey: ApiFullSurvey;
   onClose: () => void;
   onComplete: (id: string) => void;
 }) {
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const q: SurveyQuestion = survey.questions[idx];
+  const q = survey.questions[idx];
   const total = survey.questions.length;
-  const pct = ((idx) / total) * 100;
+  const pct = (idx / total) * 100;
   const accentColor = CAT_COLORS[survey.category] ?? "#06B6D4";
 
   function select(answer: string) {
     setAnswers((prev) => ({ ...prev, [q.id]: answer }));
   }
 
-  function next() {
-    if (idx < total - 1) setIdx((i) => i + 1);
-    else {
+  async function next() {
+    if (idx < total - 1) {
+      setIdx((i) => i + 1);
+    } else {
+      setSubmitting(true);
+      try {
+        await api.post(`/api/surveys/${survey.id}/respond`, { responses: answers });
+      } catch {
+        // still mark done in UI
+      }
+      setSubmitting(false);
       setDone(true);
       onComplete(survey.id);
     }
@@ -67,7 +100,7 @@ function SurveyModal({
         <div className="px-6 py-4 flex items-start justify-between" style={{ borderBottom: `1px solid rgba(255,255,255,0.06)` }}>
           <div>
             <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">
-              {CATEGORY_LABELS[survey.category]}
+              {CATEGORY_LABELS[survey.category] ?? survey.category}
             </p>
             <h3 className="font-bold text-white text-sm">{survey.title}</h3>
           </div>
@@ -77,7 +110,6 @@ function SurveyModal({
         </div>
 
         {done ? (
-          /* Completion screen */
           <div className="p-8 text-center">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -104,7 +136,7 @@ function SurveyModal({
               <div className="flex items-center justify-between text-xs mt-1">
                 <span className="text-slate-500">Category focus</span>
                 <span style={{ color: accentColor }} className="font-medium">
-                  {CATEGORY_LABELS[survey.category]}
+                  {CATEGORY_LABELS[survey.category] ?? survey.category}
                 </span>
               </div>
             </div>
@@ -117,9 +149,7 @@ function SurveyModal({
             </button>
           </div>
         ) : (
-          /* Question screen */
           <div className="p-6">
-            {/* Progress */}
             <div className="flex items-center gap-3 mb-5">
               <div className="flex-1 progress-bar">
                 <div className="progress-fill" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${accentColor}80, ${accentColor})` }} />
@@ -127,19 +157,16 @@ function SurveyModal({
               <span className="text-xs text-slate-500 shrink-0">{idx + 1} / {total}</span>
             </div>
 
-            {/* Insight hint */}
             <div
               className="rounded-lg px-3 py-2 mb-4 flex items-center gap-2"
               style={{ background: `${accentColor}0D`, border: `1px solid ${accentColor}18` }}
             >
               <Brain size={12} style={{ color: accentColor }} />
-              <p className="text-xs" style={{ color: `${accentColor}CC` }}>{q.insight}</p>
+              <p className="text-xs" style={{ color: `${accentColor}CC` }}>{q.insightLabel}</p>
             </div>
 
-            {/* Question */}
             <p className="font-semibold text-white text-base mb-5 leading-relaxed">{q.text}</p>
 
-            {/* Options */}
             <div className="space-y-2.5">
               {q.options.map((opt, i) => {
                 const isSelected = answers[q.id] === opt;
@@ -166,7 +193,6 @@ function SurveyModal({
               })}
             </div>
 
-            {/* Navigation */}
             <div className="flex items-center justify-between mt-6">
               <button
                 onClick={prev}
@@ -177,10 +203,11 @@ function SurveyModal({
               </button>
               <button
                 onClick={next}
-                disabled={!answers[q.id]}
+                disabled={!answers[q.id] || submitting}
                 className="btn-cyan px-5 py-2 text-sm flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ position: "relative" }}
               >
+                {submitting ? <Loader2 size={13} className="animate-spin" /> : null}
                 {idx === total - 1 ? "Submit" : "Next"}
                 <ChevronRight size={14} />
               </button>
@@ -193,8 +220,28 @@ function SurveyModal({
 }
 
 export default function MySurveys() {
-  const [surveys, setSurveys] = useState(MOCK_SURVEYS);
-  const [active, setActive] = useState<Survey | null>(null);
+  const [surveys, setSurveys] = useState<ApiSurveyListItem[]>([]);
+  const [active, setActive] = useState<ApiFullSurvey | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.get<{ surveys: ApiSurveyListItem[] }>("/api/surveys")
+      .then((d) => setSurveys(d.surveys))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleStart(id: string) {
+    setLoadingId(id);
+    try {
+      const { survey } = await api.get<{ survey: ApiFullSurvey }>(`/api/surveys/${id}`);
+      setActive(survey);
+    } catch {
+      // ignore
+    }
+    setLoadingId(null);
+  }
 
   function handleComplete(id: string) {
     setSurveys((prev) =>
@@ -207,7 +254,6 @@ export default function MySurveys() {
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           <ClipboardList size={22} className="text-cyan-400" />
@@ -218,7 +264,6 @@ export default function MySurveys() {
         </p>
       </div>
 
-      {/* Stats row */}
       <div className="flex gap-3 mb-7">
         {[
           { label: "Pending", count: pending.length, color: "#F59E0B", icon: Clock },
@@ -239,7 +284,21 @@ export default function MySurveys() {
         ))}
       </div>
 
-      {/* Pending */}
+      {loading && (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={24} className="animate-spin text-cyan-400" />
+        </div>
+      )}
+
+      {!loading && pending.length === 0 && done.length === 0 && (
+        <div
+          className="rounded-xl p-10 text-center"
+          style={{ background: "rgba(6,182,212,0.03)", border: "1px dashed rgba(6,182,212,0.15)" }}
+        >
+          <p className="text-slate-500 text-sm">No surveys yet. Submit a problem to generate one.</p>
+        </div>
+      )}
+
       {pending.length > 0 && (
         <section className="mb-8">
           <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
@@ -260,20 +319,22 @@ export default function MySurveys() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="badge badge-amber">Pending</span>
                       <span className="badge" style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}30` }}>
-                        {CATEGORY_LABELS[s.category]}
+                        {CATEGORY_LABELS[s.category] ?? s.category}
                       </span>
                     </div>
                     <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
                     <div className="flex items-center gap-4 text-xs text-slate-500">
-                      <span>{s.questions.length} questions</span>
+                      <span>{s.questionCount} questions</span>
                       <span>Due {new Date(s.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                     </div>
                   </div>
                   <button
-                    onClick={() => setActive(s)}
-                    className="btn-cyan px-4 py-2 text-xs flex items-center gap-1.5 shrink-0"
+                    onClick={() => handleStart(s.id)}
+                    disabled={loadingId === s.id}
+                    className="btn-cyan px-4 py-2 text-xs flex items-center gap-1.5 shrink-0 disabled:opacity-50"
                     style={{ position: "relative" }}
                   >
+                    {loadingId === s.id ? <Loader2 size={12} className="animate-spin" /> : null}
                     Start <ArrowRight size={12} />
                   </button>
                 </div>
@@ -283,7 +344,6 @@ export default function MySurveys() {
         </section>
       )}
 
-      {/* Completed */}
       {done.length > 0 && (
         <section>
           <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
@@ -308,7 +368,7 @@ export default function MySurveys() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="badge badge-green">Completed</span>
                       <span className="badge" style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}30` }}>
-                        {CATEGORY_LABELS[s.category]}
+                        {CATEGORY_LABELS[s.category] ?? s.category}
                       </span>
                     </div>
                     <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>

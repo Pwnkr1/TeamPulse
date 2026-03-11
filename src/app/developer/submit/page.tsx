@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { SIMILAR_CASES, CATEGORY_LABELS, type ProblemCategory } from "@/lib/mockData";
+import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 const CATEGORIES: { value: ProblemCategory; label: string; icon: string; desc: string }[] = [
@@ -51,6 +52,12 @@ export default function SubmitProblem() {
     if (!description.trim()) return;
     setStage("classifying");
     setAnalysisVisible(false);
+    try {
+      // Submit to backend — pipeline runs async
+      await api.post("/api/problems", { category, urgency, description });
+    } catch {
+      // Continue with UX animation even if API fails
+    }
     await new Promise((r) => setTimeout(r, 1400));
     setStage("researching");
     await new Promise((r) => setTimeout(r, 1600));

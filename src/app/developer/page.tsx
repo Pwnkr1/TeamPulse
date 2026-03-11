@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUser } from "@/lib/auth";
-import { MOCK_SURVEYS, MOCK_PROBLEMS, CATEGORY_LABELS } from "@/lib/mockData";
+import { api } from "@/lib/api";
+import { CATEGORY_LABELS } from "@/lib/mockData";
 import { Brain, ClipboardList, TrendingUp, Zap, ArrowRight, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
 const TIPS = [
@@ -14,23 +15,42 @@ const TIPS = [
   "Engineers who own their deployments ship 4x more frequently.",
 ];
 
+interface ApiProblem {
+  id: string;
+  category: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  survey?: { id: string; status: string } | null;
+}
+
+interface ApiSurvey {
+  id: string;
+  status: string;
+}
+
 export default function DevDashboard() {
   const router = useRouter();
   const [name, setName] = useState("Developer");
   const [tipIdx, setTipIdx] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [problems, setProblems] = useState<ApiProblem[]>([]);
+  const [surveys, setSurveys] = useState<ApiSurvey[]>([]);
 
   useEffect(() => {
     setMounted(true);
     const u = getUser();
     if (u) setName(u.name.split(" ")[0]);
     const iv = setInterval(() => setTipIdx((i) => (i + 1) % TIPS.length), 5000);
+
+    api.get<{ problems: ApiProblem[] }>("/api/problems").then((d) => setProblems(d.problems)).catch(() => {});
+    api.get<{ surveys: ApiSurvey[] }>("/api/surveys").then((d) => setSurveys(d.surveys)).catch(() => {});
+
     return () => clearInterval(iv);
   }, []);
 
-  const pending = MOCK_SURVEYS.filter((s) => s.status === "pending").length;
-  const completed = MOCK_SURVEYS.filter((s) => s.status === "completed").length;
-  const myProblems = MOCK_PROBLEMS.length;
+  const pending = surveys.filter((s) => s.status === "pending").length;
+  const completed = surveys.filter((s) => s.status === "completed").length;
 
   if (!mounted) return null;
 
@@ -46,7 +66,7 @@ export default function DevDashboard() {
           Good morning, <span className="text-gradient-cyan">{name}</span> 👋
         </h1>
         <p className="text-slate-400 mt-1 text-sm">
-          Sprint Week 10 &nbsp;·&nbsp; 2 surveys awaiting your response
+          Sprint Week 10 &nbsp;·&nbsp; {pending} survey{pending !== 1 ? "s" : ""} awaiting your response
         </p>
       </div>
 
@@ -64,7 +84,7 @@ export default function DevDashboard() {
         {[
           {
             label: "Problems Submitted",
-            value: myProblems,
+            value: problems.length,
             icon: Brain,
             color: "#06B6D4",
             sub: "This sprint",
@@ -168,30 +188,43 @@ export default function DevDashboard() {
             Recent Problems
           </h2>
         </div>
-        <div className="space-y-3">
-          {MOCK_PROBLEMS.map((p) => (
-            <div key={p.id} className="card-cyber p-4 flex items-start gap-4">
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)" }}
-              >
-                <AlertCircle size={16} style={{ color: "#06B6D4" }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="badge badge-cyan">{CATEGORY_LABELS[p.category]}</span>
-                  <span className={`badge ${p.status === "completed" ? "badge-green" : "badge-amber"}`}>
-                    {p.status === "completed" ? "Survey Done" : "Survey Pending"}
-                  </span>
+        {problems.length === 0 ? (
+          <div
+            className="rounded-xl p-8 text-center"
+            style={{ background: "rgba(6,182,212,0.03)", border: "1px dashed rgba(6,182,212,0.15)" }}
+          >
+            <p className="text-slate-500 text-sm">No problems submitted yet. Use the &ldquo;Submit a Problem&rdquo; button above.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {problems.map((p) => {
+              const surveyDone = p.survey?.status === "completed";
+              const surveyExists = !!p.survey;
+              return (
+                <div key={p.id} className="card-cyber p-4 flex items-start gap-4">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)" }}
+                  >
+                    <AlertCircle size={16} style={{ color: "#06B6D4" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="badge badge-cyan">{CATEGORY_LABELS[p.category] ?? p.category}</span>
+                      <span className={`badge ${surveyDone ? "badge-green" : "badge-amber"}`}>
+                        {surveyDone ? "Survey Done" : surveyExists ? "Survey Pending" : "Analyzing…"}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-300 line-clamp-2">{p.description}</p>
+                    <p className="text-xs text-slate-600 mt-1.5">
+                      {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-slate-300 line-clamp-2">{p.description}</p>
-                <p className="text-xs text-slate-600 mt-1.5">
-                  {new Date(p.submittedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

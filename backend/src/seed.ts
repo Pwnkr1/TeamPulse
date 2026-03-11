@@ -12,49 +12,53 @@ async function main() {
 
   const alex = await prisma.user.upsert({
     where: { email: 'alex.chen@team.com' },
-    update: {},
+    update: { avatar: 'AC' },
     create: {
       email: 'alex.chen@team.com',
       name: 'Alex Chen',
       passwordHash: devPassword,
       role: 'developer',
       team: 'Platform',
+      avatar: 'AC',
     },
   });
 
   const raj = await prisma.user.upsert({
     where: { email: 'raj.kumar@team.com' },
-    update: {},
+    update: { avatar: 'RK' },
     create: {
       email: 'raj.kumar@team.com',
       name: 'Raj Kumar',
       passwordHash: devPassword,
       role: 'developer',
       team: 'Infrastructure',
+      avatar: 'RK',
     },
   });
 
   const priya = await prisma.user.upsert({
     where: { email: 'priya.dev@team.com' },
-    update: {},
+    update: { avatar: 'PS' },
     create: {
       email: 'priya.dev@team.com',
       name: 'Priya Sharma',
       passwordHash: devPassword,
       role: 'developer',
       team: 'Platform',
+      avatar: 'PS',
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'sarah.mgr@team.com' },
-    update: {},
+    update: { avatar: 'SM' },
     create: {
       email: 'sarah.mgr@team.com',
       name: 'Sarah Mitchell',
       passwordHash: mgrPassword,
       role: 'manager',
       team: 'Engineering',
+      avatar: 'SM',
     },
   });
 

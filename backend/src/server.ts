@@ -1,12 +1,16 @@
 import app from './app';
 import prisma from './lib/prisma';
+import { startScheduler } from './services/scheduler';
+import { ensureSeeded } from './lib/ensureSeeded';
 
 const PORT = parseInt(process.env.PORT ?? '4000', 10);
 
 async function main() {
   try {
     await prisma.$connect();
-    console.log('[DB] SQLite connected');
+    console.log('[DB] PostgreSQL connected');
+    await ensureSeeded();
+    startScheduler();
 
     app.listen(PORT, () => {
       console.log(`[Server] TeamPulse backend running on http://localhost:${PORT}`);

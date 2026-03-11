@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,12 +15,40 @@ model User {
   role         String   @default("developer")
   team         String?
   avatar       String?
+  status       String   @default("active") // active | pending | rejected
   createdAt    DateTime @default(now())
 
   problems        Problem[]
   surveys         Survey[]
   surveyResponses SurveyResponse[]
   assignedActions ActionItem[]
+  inboxMessages   InboxMessage[]
+}
+
+model RegistrationRequest {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("developer")
+  team         String?
+  status       String   @default("pending") // pending | approved | rejected
+  reviewNote   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model InboxMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  subject   String
+  body      String
+  fromName  String
+  fromEmail String
+  isRead    Boolean  @default(false)
+  type      String   @default("general") // general | retro | system | approval
+  createdAt DateTime @default(now())
 }
 
 model Problem {
@@ -73,17 +101,24 @@ model SurveyQuestion {
 }
 
 model SurveyResponse {
-  id         String   @id @default(cuid())
-  surveyId   String
-  survey     Survey   @relation(fields: [surveyId], references: [id])
+  id          String   @id @default(cuid())
+  surveyId    String
+  survey      Survey   @relation(fields: [surveyId], references: [id])
   developerId String
-  developer  User     @relation(fields: [developerId], references: [id])
-  questionId String
-  question   SurveyQuestion @relation(fields: [questionId], references: [id])
-  answer     String
-  createdAt  DateTime @default(now())
+  developer   User     @relation(fields: [developerId], references: [id])
+  questionId  String
+  question    SurveyQuestion @relation(fields: [questionId], references: [id])
+  answer      String
+  createdAt   DateTime @default(now())
 
   @@unique([surveyId, questionId])
+}
+
+model DemoEntry {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  createdAt DateTime @default(now())
 }
 
 model ActionItem {

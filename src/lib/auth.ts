@@ -9,50 +9,32 @@ export interface User {
   team?: string;
 }
 
-const MOCK_USERS: Array<User & { password: string }> = [
-  {
-    id: "dev-1",
-    name: "Alex Chen",
-    email: "alex.chen@team.com",
-    password: "Dev@123",
-    role: "developer",
-    avatar: "AC",
-    team: "Platform",
-  },
-  {
-    id: "dev-2",
-    name: "Raj Kumar",
-    email: "raj.kumar@team.com",
-    password: "Dev@123",
-    role: "developer",
-    avatar: "RK",
-    team: "Backend",
-  },
-  {
-    id: "mgr-1",
-    name: "Sarah Mitchell",
-    email: "sarah.mgr@team.com",
-    password: "Mgr@123",
-    role: "manager",
-    avatar: "SM",
-    team: "Engineering",
-  },
-];
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
-export function login(email: string, password: string): User | null {
-  const found = MOCK_USERS.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-  );
-  if (!found) return null;
-  const { password: _pw, ...user } = found;
-  if (typeof window !== "undefined") {
-    localStorage.setItem("tp_user", JSON.stringify(user));
+export async function login(email: string, password: string): Promise<User | null> {
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) return null;
+    const { token, user } = await res.json();
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tp_token", token);
+      localStorage.setItem("tp_user", JSON.stringify(user));
+    }
+    return user as User;
+  } catch {
+    return null;
   }
-  return user;
 }
 
 export function logout(): void {
-  if (typeof window !== "undefined") localStorage.removeItem("tp_user");
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("tp_token");
+    localStorage.removeItem("tp_user");
+  }
 }
 
 export function getUser(): User | null {
@@ -64,4 +46,9 @@ export function getUser(): User | null {
   } catch {
     return null;
   }
+}
+
+export function getToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("tp_token");
 }
