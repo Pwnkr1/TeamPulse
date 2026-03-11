@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("developer")
+  team         String?
+  avatar       String?
+  createdAt    DateTime @default(now())
+
+  problems        Problem[]
+  surveys         Survey[]
+  surveyResponses SurveyResponse[]
+  assignedActions ActionItem[]
+}
+
+model Problem {
+  id             String   @id @default(cuid())
+  developerId    String
+  developer      User     @relation(fields: [developerId], references: [id])
+  category       String
+  urgency        String
+  description    String
+  status         String   @default("analyzing")
+  classification String?
+  similarCases   String?
+  sourcesUsed    String?
+  createdAt      DateTime @default(now())
+
+  survey Survey?
+}
+
+model Survey {
+  id              String    @id @default(cuid())
+  problemId       String    @unique
+  problem         Problem   @relation(fields: [problemId], references: [id])
+  developerId     String
+  developer       User      @relation(fields: [developerId], references: [id])
+  title           String    @default("Mindset Survey")
+  category        String    @default("general")
+  status          String    @default("pending")
+  deadline        DateTime  @default(now())
+  completedAt     DateTime?
+  coachingSummary String?
+  mindsetScore    Int?
+  createdAt       DateTime  @default(now())
+
+  questions SurveyQuestion[]
+  responses SurveyResponse[]
+  actions   ActionItem[]
+}
+
+model SurveyQuestion {
+  id           String @id @default(cuid())
+  surveyId     String
+  survey       Survey @relation(fields: [surveyId], references: [id])
+  text         String
+  options      String
+  insightLabel String
+  sourceRef    String?
+  orderIndex   Int
+
+  responses SurveyResponse[]
+}
+
+model SurveyResponse {
+  id         String   @id @default(cuid())
+  surveyId   String
+  survey     Survey   @relation(fields: [surveyId], references: [id])
+  developerId String
+  developer  User     @relation(fields: [developerId], references: [id])
+  questionId String
+  question   SurveyQuestion @relation(fields: [questionId], references: [id])
+  answer     String
+  createdAt  DateTime @default(now())
+
+  @@unique([surveyId, questionId])
+}
+
+model ActionItem {
+  id          String    @id @default(cuid())
+  title       String
+  description String    @default("")
+  assigneeId  String
+  assignee    User      @relation(fields: [assigneeId], references: [id])
+  surveyId    String?
+  survey      Survey?   @relation(fields: [surveyId], references: [id])
+  priority    String    @default("medium")
+  status      String    @default("todo")
+  dueDate     DateTime?
+  category    String?
+  sourceRef   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
