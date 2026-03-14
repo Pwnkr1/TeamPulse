@@ -24,10 +24,10 @@ interface InboxMessage {
 }
 
 const TYPE_CONFIG = {
-  retro: { label: "Retro", color: "#06B6D4", bg: "rgba(6,182,212,0.1)", border: "rgba(6,182,212,0.25)" },
-  approval: { label: "Approval", color: "#10B981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)" },
-  system: { label: "System", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.25)" },
-  general: { label: "General", color: "#94A3B8", bg: "rgba(148,163,184,0.08)", border: "rgba(148,163,184,0.2)" },
+  retro: { label: "Retro", color: "#7C6BC4", bg: "rgba(124,107,196,0.1)", border: "rgba(124,107,196,0.25)" },
+  approval: { label: "Approval", color: "#059669", bg: "rgba(5,150,105,0.1)", border: "rgba(5,150,105,0.25)" },
+  system: { label: "System", color: "#E9A020", bg: "rgba(233,160,32,0.1)", border: "rgba(233,160,32,0.25)" },
+  general: { label: "General", color: "#5C5A7A", bg: "rgba(92,90,122,0.08)", border: "rgba(92,90,122,0.2)" },
 };
 
 function formatDate(dateStr: string) {
@@ -92,13 +92,14 @@ export default function InboxPage() {
       <div className="space-y-4 max-w-3xl">
         <button
           onClick={() => setSelected(null)}
-          className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 text-sm transition-colors"
+          style={{ color: "#5C5A7A" }}
         >
           <ChevronLeft size={16} />
           Back to Inbox
         </button>
 
-        <div className="rounded-xl p-6 space-y-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="rounded-xl p-6 space-y-4" style={{ background: "rgba(124,107,196,0.05)", border: "1px solid rgba(124,107,196,0.12)" }}>
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -110,9 +111,9 @@ export default function InboxPage() {
                   {cfg.label}
                 </span>
               </div>
-              <h2 className="text-lg font-semibold text-white">{selected.subject}</h2>
-              <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
-                <span>From: <span className="text-slate-400">{selected.fromName}</span> &lt;{selected.fromEmail}&gt;</span>
+              <h2 className="text-lg font-semibold" style={{ color: "#1E1B3A" }}>{selected.subject}</h2>
+              <div className="flex items-center gap-3 mt-1.5 text-xs" style={{ color: "#9896B5" }}>
+                <span>From: <span style={{ color: "#5C5A7A" }}>{selected.fromName}</span> &lt;{selected.fromEmail}&gt;</span>
                 <span className="flex items-center gap-1">
                   <Clock size={11} />
                   {new Date(selected.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
@@ -121,12 +122,12 @@ export default function InboxPage() {
             </div>
           </div>
 
-          <hr style={{ borderColor: "rgba(255,255,255,0.06)" }} />
+          <hr style={{ borderColor: "rgba(124,107,196,0.12)" }} />
 
           {/* Body */}
           <div
             className="text-sm leading-relaxed"
-            style={{ color: "rgba(226,232,240,0.85)" }}
+            style={{ color: "#5C5A7A" }}
             dangerouslySetInnerHTML={{ __html: selected.body }}
           />
         </div>
@@ -141,17 +142,17 @@ export default function InboxPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold text-white">Inbox</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "#1E1B3A" }}>Inbox</h1>
             {unreadCount > 0 && (
               <span
                 className="text-xs px-2 py-0.5 rounded-full font-bold"
-                style={{ background: "rgba(6,182,212,0.15)", border: "1px solid rgba(6,182,212,0.35)", color: "#22D3EE" }}
+                style={{ background: "rgba(124,107,196,0.15)", border: "1px solid rgba(124,107,196,0.35)", color: "#7C6BC4" }}
               >
                 {unreadCount} new
               </span>
             )}
           </div>
-          <p className="text-slate-400 text-sm mt-0.5">Your messages and weekly retro updates</p>
+          <p className="text-sm mt-0.5" style={{ color: "#5C5A7A" }}>Your messages and weekly retro updates</p>
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
@@ -159,16 +160,16 @@ export default function InboxPage() {
               onClick={markAllRead}
               disabled={markingAll}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
-              style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.2)", color: "#22D3EE" }}
+              style={{ background: "rgba(124,107,196,0.08)", border: "1px solid rgba(124,107,196,0.2)", color: "#7C6BC4" }}
             >
-              {markingAll ? <div className="w-3 h-3 rounded-full border border-cyan-400 border-t-transparent animate-spin" /> : <CheckCheck size={13} />}
+              {markingAll ? <div className="w-3 h-3 rounded-full border border-[#7C6BC4] border-t-transparent animate-spin" /> : <CheckCheck size={13} />}
               Mark all read
             </button>
           )}
           <button
             onClick={fetchMessages}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-colors"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors"
+            style={{ background: "rgba(124,107,196,0.05)", border: "1px solid rgba(124,107,196,0.12)", color: "#5C5A7A" }}
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           </button>
@@ -178,13 +179,13 @@ export default function InboxPage() {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
+          <div className="w-8 h-8 rounded-full border-2 border-[#7C6BC4] border-t-transparent animate-spin" />
         </div>
       ) : messages.length === 0 ? (
-        <div className="rounded-xl py-16 text-center" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <Inbox size={36} className="mx-auto mb-3 text-slate-600" />
-          <p className="text-slate-400 font-medium">Your inbox is empty</p>
-          <p className="text-slate-600 text-sm mt-1">Weekly retro emails and system notifications will appear here</p>
+        <div className="rounded-xl py-16 text-center" style={{ background: "rgba(124,107,196,0.05)", border: "1px solid rgba(124,107,196,0.12)" }}>
+          <Inbox size={36} className="mx-auto mb-3" style={{ color: "#9896B5" }} />
+          <p className="font-medium" style={{ color: "#5C5A7A" }}>Your inbox is empty</p>
+          <p className="text-sm mt-1" style={{ color: "#9896B5" }}>Weekly retro emails and system notifications will appear here</p>
         </div>
       ) : (
         <div className="space-y-1.5">
@@ -197,8 +198,8 @@ export default function InboxPage() {
                 className="w-full text-left rounded-xl px-4 py-3.5 flex items-start gap-3.5 transition-all hover:scale-[1.002]"
                 style={
                   !msg.isRead
-                    ? { background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.15)" }
-                    : { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }
+                    ? { background: "rgba(124,107,196,0.07)", border: "1px solid rgba(124,107,196,0.18)" }
+                    : { background: "rgba(124,107,196,0.03)", border: "1px solid rgba(124,107,196,0.08)" }
                 }
               >
                 {/* Icon */}
@@ -218,19 +219,19 @@ export default function InboxPage() {
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       {!msg.isRead && (
-                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#06B6D4" }} />
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#7C6BC4" }} />
                       )}
-                      <p className={`text-sm truncate ${msg.isRead ? "text-slate-300" : "text-white font-medium"}`}>
+                      <p className="text-sm truncate" style={{ color: msg.isRead ? "#5C5A7A" : "#1E1B3A", fontWeight: msg.isRead ? 400 : 500 }}>
                         {msg.subject}
                       </p>
                     </div>
-                    <span className="text-xs text-slate-500 flex-shrink-0 flex items-center gap-1">
+                    <span className="text-xs flex-shrink-0 flex items-center gap-1" style={{ color: "#9896B5" }}>
                       <Clock size={10} />
                       {formatDate(msg.createdAt)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs text-slate-500 truncate">{msg.fromName}</span>
+                    <span className="text-xs truncate" style={{ color: "#9896B5" }}>{msg.fromName}</span>
                     <span
                       className="text-xs px-1.5 py-0 rounded font-medium flex-shrink-0"
                       style={{ background: cfg.bg, color: cfg.color }}

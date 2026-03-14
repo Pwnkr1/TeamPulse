@@ -104,8 +104,8 @@ export default function RequestsPage() {
           className="fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium shadow-xl"
           style={
             toast.type === "success"
-              ? { background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)", color: "#34D399" }
-              : { background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#F87171" }
+              ? { background: "rgba(5,150,105,0.15)", border: "1px solid rgba(5,150,105,0.3)", color: "#059669" }
+              : { background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.3)", color: "#DC2626" }
           }
         >
           {toast.type === "success" ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
@@ -116,13 +116,13 @@ export default function RequestsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Registration Requests</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Review and approve developer account requests</p>
+          <h1 className="text-2xl font-bold" style={{ color: "#1E1B3A" }}>Registration Requests</h1>
+          <p className="text-sm mt-0.5" style={{ color: "#5C5A7A" }}>Review and approve developer account requests</p>
         </div>
         <button
           onClick={fetchRequests}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-colors"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
+          style={{ background: "rgba(233,160,32,0.06)", border: "1px solid rgba(233,160,32,0.15)", color: "#5C5A7A" }}
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           Refresh
@@ -134,7 +134,7 @@ export default function RequestsPage() {
         {(["all", "pending", "approved", "rejected"] as Filter[]).map((f) => {
           const isActive = filter === f;
           const cfg = f === "all" ? null : STATUS_CONFIG[f];
-          const color = cfg?.color ?? "#8B5CF6";
+          const color = cfg?.color ?? "#E9A020";
           return (
             <button
               key={f}
@@ -143,11 +143,11 @@ export default function RequestsPage() {
               style={
                 isActive
                   ? { background: `${color}15`, border: `1px solid ${color}40` }
-                  : { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }
+                  : { background: "rgba(124,107,196,0.04)", border: "1px solid rgba(124,107,196,0.10)" }
               }
             >
-              <p className="text-2xl font-bold" style={{ color: isActive ? color : "white" }}>{counts[f]}</p>
-              <p className="text-xs capitalize mt-0.5" style={{ color: isActive ? color : "rgba(148,163,184,0.7)" }}>{f}</p>
+              <p className="text-2xl font-bold" style={{ color: isActive ? color : "#1E1B3A" }}>{counts[f]}</p>
+              <p className="text-xs capitalize mt-0.5" style={{ color: isActive ? color : "#9896B5" }}>{f}</p>
             </button>
           );
         })}
@@ -156,13 +156,13 @@ export default function RequestsPage() {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+          <div className="w-8 h-8 rounded-full border-2 border-[#E9A020] border-t-transparent animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl py-16 text-center" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <UserPlus size={36} className="mx-auto mb-3 text-slate-600" />
-          <p className="text-slate-400 font-medium">No {filter === "all" ? "" : filter} requests</p>
-          <p className="text-slate-600 text-sm mt-1">New registration requests will appear here</p>
+        <div className="rounded-xl py-16 text-center" style={{ background: "rgba(124,107,196,0.04)", border: "1px solid rgba(124,107,196,0.10)" }}>
+          <UserPlus size={36} className="mx-auto mb-3" style={{ color: "#9896B5" }} />
+          <p className="font-medium" style={{ color: "#5C5A7A" }}>No {filter === "all" ? "" : filter} requests</p>
+          <p className="text-sm mt-1" style={{ color: "#9896B5" }}>New registration requests will appear here</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -176,14 +176,14 @@ export default function RequestsPage() {
               <div
                 key={req.id}
                 className="rounded-xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+                style={{ background: "#FFFFFF", border: "1px solid rgba(124,107,196,0.15)" }}
               >
                 <div className="p-4">
                   <div className="flex items-start gap-4">
                     {/* Avatar */}
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                      style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}
+                      style={{ background: "rgba(233,160,32,0.15)", border: "1px solid rgba(233,160,32,0.3)", color: "#E9A020" }}
                     >
                       {req.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
@@ -191,7 +191,7 @@ export default function RequestsPage() {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-white">{req.name}</p>
+                        <p className="font-semibold" style={{ color: "#1E1B3A" }}>{req.name}</p>
                         <span
                           className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium"
                           style={{ background: cfg.bg, border: `1px solid ${cfg.border}`, color: cfg.color }}
@@ -200,13 +200,13 @@ export default function RequestsPage() {
                           {cfg.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-slate-400 flex-wrap">
+                      <div className="flex items-center gap-4 mt-1 text-xs flex-wrap" style={{ color: "#5C5A7A" }}>
                         <span className="flex items-center gap-1"><Mail size={11} />{req.email}</span>
                         {req.team && <span className="flex items-center gap-1"><Users size={11} />{req.team}</span>}
                         <span>{new Date(req.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
                       </div>
                       {req.reviewNote && (
-                        <p className="text-xs text-slate-500 mt-1 italic">Note: {req.reviewNote}</p>
+                        <p className="text-xs mt-1 italic" style={{ color: "#9896B5" }}>Note: {req.reviewNote}</p>
                       )}
                     </div>
 
@@ -218,10 +218,10 @@ export default function RequestsPage() {
                             onClick={() => handleApprove(req.id)}
                             disabled={!!isActioning}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
-                            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", color: "#34D399" }}
+                            style={{ background: "rgba(5,150,105,0.10)", border: "1px solid rgba(5,150,105,0.3)", color: "#059669" }}
                           >
                             {actionLoading === req.id + "_approve" ? (
-                              <div className="w-3 h-3 rounded-full border border-green-400 border-t-transparent animate-spin" />
+                              <div className="w-3 h-3 rounded-full border border-[#059669] border-t-transparent animate-spin" />
                             ) : (
                               <CheckCircle2 size={13} />
                             )}
@@ -245,22 +245,22 @@ export default function RequestsPage() {
 
                 {/* Reject note panel */}
                 {isExpanded && req.status === "pending" && (
-                  <div className="px-4 pb-4 pt-0" style={{ borderTop: "1px solid rgba(239,68,68,0.12)" }}>
+                  <div className="px-4 pb-4 pt-0" style={{ borderTop: "1px solid rgba(220,38,38,0.12)" }}>
                     <div className="pt-3">
-                      <label className="block text-xs text-slate-400 mb-1.5">Rejection note <span className="text-slate-600">(optional — shown to applicant)</span></label>
+                      <label className="block text-xs mb-1.5" style={{ color: "#5C5A7A" }}>Rejection note <span style={{ color: "#9896B5" }}>(optional — shown to applicant)</span></label>
                       <textarea
                         value={rejectNote[req.id] ?? ""}
                         onChange={(e) => setRejectNote((prev) => ({ ...prev, [req.id]: e.target.value }))}
                         placeholder="e.g. Team quota reached, please apply again next quarter."
                         rows={2}
-                        className="w-full bg-transparent rounded-lg px-3 py-2 text-sm text-white resize-none placeholder:text-slate-600 focus:outline-none"
-                        style={{ border: "1px solid rgba(239,68,68,0.25)" }}
+                        className="w-full bg-transparent rounded-lg px-3 py-2 text-sm resize-none focus:outline-none"
+                        style={{ border: "1px solid rgba(220,38,38,0.25)", color: "#1E1B3A" }}
                       />
                       <div className="flex justify-end gap-2 mt-2">
                         <button
                           onClick={() => setExpanded(null)}
-                          className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white transition-colors"
-                          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                          className="px-3 py-1.5 rounded-lg text-xs transition-colors"
+                          style={{ background: "rgba(124,107,196,0.06)", border: "1px solid rgba(124,107,196,0.12)", color: "#5C5A7A" }}
                         >
                           Cancel
                         </button>
@@ -268,10 +268,10 @@ export default function RequestsPage() {
                           onClick={() => handleReject(req.id)}
                           disabled={!!isActioning}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
-                          style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.35)", color: "#F87171" }}
+                          style={{ background: "rgba(220,38,38,0.10)", border: "1px solid rgba(220,38,38,0.30)", color: "#DC2626" }}
                         >
                           {actionLoading === req.id + "_reject" ? (
-                            <div className="w-3 h-3 rounded-full border border-red-400 border-t-transparent animate-spin" />
+                            <div className="w-3 h-3 rounded-full border border-[#DC2626] border-t-transparent animate-spin" />
                           ) : (
                             <XCircle size={13} />
                           )}

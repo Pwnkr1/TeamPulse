@@ -59,13 +59,13 @@ export default function DevDashboard() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
-          <span className="pulse-dot" style={{ background: "#06B6D4" }} />
-          <span className="text-xs text-slate-500 uppercase tracking-widest">Live Session</span>
+          <span className="pulse-dot" style={{ background: "#7C6BC4" }} />
+          <span className="text-xs uppercase tracking-widest" style={{ color: "#9896B5" }}>Live Session</span>
         </div>
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold" style={{ color: "#1E1B3A" }}>
           Good morning, <span className="text-gradient-cyan">{name}</span> 👋
         </h1>
-        <p className="text-slate-400 mt-1 text-sm">
+        <p className="mt-1 text-sm" style={{ color: "#5C5A7A" }}>
           Sprint Week 10 &nbsp;·&nbsp; {pending} survey{pending !== 1 ? "s" : ""} awaiting your response
         </p>
       </div>
@@ -73,10 +73,10 @@ export default function DevDashboard() {
       {/* Tip banner */}
       <div
         className="rounded-xl px-5 py-3.5 mb-7 flex items-start gap-3"
-        style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)" }}
+        style={{ background: "rgba(124,107,196,0.09)", border: "1px solid rgba(124,107,196,0.18)" }}
       >
         <span className="text-lg">💡</span>
-        <p className="text-sm text-slate-300 leading-relaxed transition-all duration-500">{TIPS[tipIdx]}</p>
+        <p className="text-sm leading-relaxed transition-all duration-500" style={{ color: "#5C5A7A" }}>{TIPS[tipIdx]}</p>
       </div>
 
       {/* Stat cards */}
@@ -86,21 +86,21 @@ export default function DevDashboard() {
             label: "Problems Submitted",
             value: problems.length,
             icon: Brain,
-            color: "#06B6D4",
+            color: "#7C6BC4",
             sub: "This sprint",
           },
           {
             label: "Surveys Pending",
             value: pending,
             icon: Clock,
-            color: "#F59E0B",
+            color: "#B45309",
             sub: "Action required",
           },
           {
             label: "Surveys Completed",
             value: completed,
             icon: CheckCircle2,
-            color: "#10B981",
+            color: "#059669",
             sub: "Great work!",
           },
         ].map((s) => (
@@ -116,8 +116,8 @@ export default function DevDashboard() {
                 {s.value}
               </span>
             </div>
-            <p className="text-sm font-medium text-white">{s.label}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{s.sub}</p>
+            <p className="text-sm font-medium" style={{ color: "#1E1B3A" }}>{s.label}</p>
+            <p className="text-xs mt-0.5" style={{ color: "#9896B5" }}>{s.sub}</p>
           </div>
         ))}
       </div>
@@ -126,19 +126,20 @@ export default function DevDashboard() {
       <div className="grid grid-cols-2 gap-4 mb-8">
         <button
           onClick={() => router.push("/developer/submit")}
-          className="card-cyber p-5 text-left hover:border-cyan-400/50 group transition-all"
+          className="card-cyber p-5 text-left group transition-all"
+          style={{ border: "1px solid rgba(124,107,196,0.18)" }}
         >
           <div className="flex items-center justify-between mb-4">
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(6,182,212,0.12)", border: "1px solid rgba(6,182,212,0.25)" }}
+              style={{ background: "rgba(124,107,196,0.12)", border: "1px solid rgba(124,107,196,0.25)" }}
             >
-              <Brain size={20} style={{ color: "#06B6D4" }} />
+              <Brain size={20} style={{ color: "#7C6BC4" }} />
             </div>
-            <ArrowRight size={16} className="text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
+            <ArrowRight size={16} style={{ color: "#9896B5" }} className="group-hover:translate-x-1 transition-all" />
           </div>
-          <h3 className="font-semibold text-white mb-1">Submit a Problem</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <h3 className="font-semibold mb-1" style={{ color: "#1E1B3A" }}>Submit a Problem</h3>
+          <p className="text-xs leading-relaxed" style={{ color: "#9896B5" }}>
             Describe your blocker and our AI agent will classify it, find industry solutions, and generate a personalised survey.
           </p>
           <div className="mt-4">
@@ -150,26 +151,27 @@ export default function DevDashboard() {
 
         <button
           onClick={() => router.push("/developer/surveys")}
-          className="card-cyber p-5 text-left hover:border-cyan-400/50 group transition-all"
+          className="card-cyber p-5 text-left group transition-all"
+          style={{ border: "1px solid rgba(124,107,196,0.18)" }}
         >
           <div className="flex items-center justify-between mb-4">
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)" }}
+              style={{ background: "rgba(180,83,9,0.12)", border: "1px solid rgba(180,83,9,0.25)" }}
             >
-              <ClipboardList size={20} style={{ color: "#F59E0B" }} />
+              <ClipboardList size={20} style={{ color: "#B45309" }} />
             </div>
             {pending > 0 && (
               <span
                 className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ background: "rgba(245,158,11,0.2)", color: "#FCD34D", border: "1px solid rgba(245,158,11,0.3)" }}
+                style={{ background: "rgba(180,83,9,0.15)", color: "#B45309", border: "1px solid rgba(180,83,9,0.3)" }}
               >
                 {pending} pending
               </span>
             )}
           </div>
-          <h3 className="font-semibold text-white mb-1">My Surveys</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <h3 className="font-semibold mb-1" style={{ color: "#1E1B3A" }}>My Surveys</h3>
+          <p className="text-xs leading-relaxed" style={{ color: "#9896B5" }}>
             Complete mindset-shifting surveys generated from your problems. Your responses help your manager coach you better.
           </p>
           <div className="mt-4">
@@ -183,17 +185,17 @@ export default function DevDashboard() {
       {/* Recent Problems */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-white flex items-center gap-2">
-            <TrendingUp size={16} className="text-cyan-400" />
+          <h2 className="font-semibold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+            <TrendingUp size={16} style={{ color: "#7C6BC4" }} />
             Recent Problems
           </h2>
         </div>
         {problems.length === 0 ? (
           <div
             className="rounded-xl p-8 text-center"
-            style={{ background: "rgba(6,182,212,0.03)", border: "1px dashed rgba(6,182,212,0.15)" }}
+            style={{ background: "rgba(124,107,196,0.05)", border: "1px dashed rgba(124,107,196,0.25)" }}
           >
-            <p className="text-slate-500 text-sm">No problems submitted yet. Use the &ldquo;Submit a Problem&rdquo; button above.</p>
+            <p className="text-sm" style={{ color: "#9896B5" }}>No problems submitted yet. Use the &ldquo;Submit a Problem&rdquo; button above.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -204,9 +206,9 @@ export default function DevDashboard() {
                 <div key={p.id} className="card-cyber p-4 flex items-start gap-4">
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)" }}
+                    style={{ background: "rgba(124,107,196,0.1)", border: "1px solid rgba(124,107,196,0.2)" }}
                   >
-                    <AlertCircle size={16} style={{ color: "#06B6D4" }} />
+                    <AlertCircle size={16} style={{ color: "#7C6BC4" }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -215,8 +217,8 @@ export default function DevDashboard() {
                         {surveyDone ? "Survey Done" : surveyExists ? "Survey Pending" : "Analyzing…"}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-300 line-clamp-2">{p.description}</p>
-                    <p className="text-xs text-slate-600 mt-1.5">
+                    <p className="text-sm line-clamp-2" style={{ color: "#5C5A7A" }}>{p.description}</p>
+                    <p className="text-xs mt-1.5" style={{ color: "#9896B5" }}>
                       {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>

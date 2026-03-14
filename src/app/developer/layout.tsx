@@ -19,14 +19,14 @@ export default function DeveloperLayout({ children }: { children: React.ReactNod
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#03060F" }}>
-        <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg, #EDE8FF 0%, #FFF8E6 100%)" }}>
+        <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "rgba(124,107,196,0.3)", borderTopColor: "#7C6BC4" }} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "#03060F" }}>
+    <div className="min-h-screen">
       <AnimatedBg variant="cyan" />
       <Sidebar user={user} />
       <main className="ml-60 min-h-screen relative z-10">

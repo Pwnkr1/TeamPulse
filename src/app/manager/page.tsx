@@ -55,29 +55,29 @@ export default function ManagerDashboard() {
 
   if (!mounted) return null;
 
-  const pColors: Record<string, string> = { high: "#EF4444", medium: "#F59E0B", low: "#10B981" };
+  const pColors: Record<string, string> = { high: "#DC2626", medium: "#B45309", low: "#059669" };
 
   return (
     <div className="animate-fade-in">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
-          <span className="pulse-dot" style={{ background: "#8B5CF6" }} />
-          <span className="text-xs text-slate-500 uppercase tracking-widest">Manager Portal · Live</span>
+          <span className="pulse-dot" style={{ background: "#E9A020" }} />
+          <span className="text-xs uppercase tracking-widest" style={{ color: "#9896B5" }}>Manager Portal · Live</span>
         </div>
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold" style={{ color: "#1E1B3A" }}>
           Team <span className="text-gradient-purple">Overview</span>
         </h1>
-        <p className="text-slate-400 mt-1 text-sm">Sprint Week 10 · {team.length} engineers</p>
+        <p className="mt-1 text-sm" style={{ color: "#5C5A7A" }}>Sprint Week 10 · {team.length} engineers</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Problems", value: stats.totalProblems, icon: Brain, color: "#06B6D4", sub: "This sprint" },
-          { label: "Survey Completion", value: `${stats.completionRate}%`, icon: ClipboardList, color: "#8B5CF6", sub: "Overall" },
-          { label: "Avg Mindset Score", value: stats.avgScore, icon: TrendingUp, color: "#10B981", sub: "Out of 100" },
-          { label: "Blocked Engineers", value: stats.blockedCount, icon: AlertTriangle, color: "#EF4444", sub: "Needs attention" },
+          { label: "Total Problems", value: stats.totalProblems, icon: Brain, color: "#7C6BC4", sub: "This sprint" },
+          { label: "Survey Completion", value: `${stats.completionRate}%`, icon: ClipboardList, color: "#E9A020", sub: "Overall" },
+          { label: "Avg Mindset Score", value: stats.avgScore, icon: TrendingUp, color: "#059669", sub: "Out of 100" },
+          { label: "Blocked Engineers", value: stats.blockedCount, icon: AlertTriangle, color: "#DC2626", sub: "Needs attention" },
         ].map((s) => (
           <div key={s.label} className="card-purple p-5">
             <div className="flex items-start justify-between mb-3">
@@ -89,8 +89,8 @@ export default function ManagerDashboard() {
               </div>
               <span className="text-3xl font-black" style={{ color: s.color }}>{s.value}</span>
             </div>
-            <p className="text-sm font-medium text-white">{s.label}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{s.sub}</p>
+            <p className="text-sm font-medium" style={{ color: "#1E1B3A" }}>{s.label}</p>
+            <p className="text-xs mt-0.5" style={{ color: "#9896B5" }}>{s.sub}</p>
           </div>
         ))}
       </div>
@@ -99,18 +99,19 @@ export default function ManagerDashboard() {
       <div className="grid grid-cols-2 gap-5 mb-8">
         <div className="card-purple p-5">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart2 size={15} className="text-violet-400" />
-            <p className="text-sm font-semibold text-white">Problems by Category</p>
+            <BarChart2 size={15} style={{ color: "#E9A020" }} />
+            <p className="text-sm font-semibold" style={{ color: "#1E1B3A" }}>Problems by Category</p>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={categoryData} margin={{ top: 0, right: 0, left: -20, bottom: 36 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" tick={{ fill: "#64748B", fontSize: 9 }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fill: "#64748B", fontSize: 10 }} tickLine={false} axisLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,107,196,0.12)" />
+              <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" tick={{ fill: "#9896B5", fontSize: 9 }} tickLine={false} axisLine={false} />
+              <YAxis tick={{ fill: "#9896B5", fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip
-                contentStyle={{ background: "rgba(6,12,28,0.95)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: "#E2E8F0" }}
-                cursor={{ fill: "rgba(139,92,246,0.06)" }}
+                contentStyle={{ background: "#FFFFFF", border: "1px solid rgba(233,160,32,0.3)", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#1E1B3A" }}
+                itemStyle={{ color: "#1E1B3A" }}
+                cursor={{ fill: "rgba(233,160,32,0.06)" }}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {categoryData.map((entry, idx) => (
@@ -123,17 +124,18 @@ export default function ManagerDashboard() {
 
         <div className="card-purple p-5">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp size={15} className="text-violet-400" />
-            <p className="text-sm font-semibold text-white">Team Mindset Radar</p>
+            <TrendingUp size={15} style={{ color: "#E9A020" }} />
+            <p className="text-sm font-semibold" style={{ color: "#1E1B3A" }}>Team Mindset Radar</p>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <RadarChart data={radarData}>
-              <PolarGrid stroke="rgba(255,255,255,0.06)" />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: "#64748B", fontSize: 10 }} />
-              <Radar name="Team" dataKey="A" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.2} strokeWidth={2} />
+              <PolarGrid stroke="rgba(124,107,196,0.12)" />
+              <PolarAngleAxis dataKey="subject" tick={{ fill: "#9896B5", fontSize: 10 }} />
+              <Radar name="Team" dataKey="A" stroke="#7C6BC4" fill="#7C6BC4" fillOpacity={0.2} strokeWidth={2} />
               <Tooltip
-                contentStyle={{ background: "rgba(6,12,28,0.95)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: "#E2E8F0" }}
+                contentStyle={{ background: "#FFFFFF", border: "1px solid rgba(233,160,32,0.3)", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#1E1B3A" }}
+                itemStyle={{ color: "#1E1B3A" }}
               />
             </RadarChart>
           </ResponsiveContainer>
@@ -143,12 +145,13 @@ export default function ManagerDashboard() {
       {/* Team Members Grid */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-white flex items-center gap-2">
-            <Users size={16} className="text-violet-400" /> Team Members
+          <h2 className="font-semibold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+            <Users size={16} style={{ color: "#E9A020" }} /> Team Members
           </h2>
           <button
             onClick={() => router.push("/manager/insights")}
-            className="text-xs flex items-center gap-1 text-violet-400 hover:text-violet-300 transition-colors"
+            className="text-xs flex items-center gap-1 transition-colors"
+            style={{ color: "#E9A020" }}
           >
             View full insights <ArrowRight size={12} />
           </button>
@@ -162,13 +165,13 @@ export default function ManagerDashboard() {
                 <div className="flex items-start gap-3 mb-3">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                    style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}
+                    style={{ background: "rgba(233,160,32,0.15)", border: "1px solid rgba(233,160,32,0.3)", color: "#E9A020" }}
                   >
                     {m.avatar ?? m.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{m.name}</p>
-                    <p className="text-xs text-slate-500">{m.role}</p>
+                    <p className="text-sm font-semibold truncate" style={{ color: "#1E1B3A" }}>{m.name}</p>
+                    <p className="text-xs" style={{ color: "#9896B5" }}>{m.role}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-3">
@@ -178,11 +181,11 @@ export default function ManagerDashboard() {
                   >
                     {sentiment.label}
                   </span>
-                  <span className="text-xs text-slate-600">{m.team}</span>
+                  <span className="text-xs" style={{ color: "#9896B5" }}>{m.team}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <div className="flex items-center justify-between text-xs mb-1.5" style={{ color: "#9896B5" }}>
                   <span>Surveys</span>
-                  <span style={{ color: pct === 100 ? "#10B981" : "#F59E0B" }}>
+                  <span style={{ color: pct === 100 ? "#059669" : "#B45309" }}>
                     {m.surveysDone}/{m.surveysTotal}
                   </span>
                 </div>
@@ -198,8 +201,8 @@ export default function ManagerDashboard() {
                   />
                 </div>
                 <div className="flex items-center justify-between text-xs mt-2">
-                  <span className="text-slate-600">{m.problemsCount} problems</span>
-                  <span style={{ color: m.score >= 75 ? "#10B981" : m.score >= 50 ? "#F59E0B" : "#EF4444" }}>
+                  <span style={{ color: "#9896B5" }}>{m.problemsCount} problems</span>
+                  <span style={{ color: m.score >= 75 ? "#059669" : m.score >= 50 ? "#B45309" : "#DC2626" }}>
                     Score: {m.score}
                   </span>
                 </div>
@@ -212,12 +215,13 @@ export default function ManagerDashboard() {
       {/* Top Action Items */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-white flex items-center gap-2">
-            <Zap size={16} className="text-violet-400" /> Top Action Items
+          <h2 className="font-semibold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+            <Zap size={16} style={{ color: "#E9A020" }} /> Top Action Items
           </h2>
           <button
             onClick={() => router.push("/manager/actions")}
-            className="text-xs flex items-center gap-1 text-violet-400 hover:text-violet-300 transition-colors"
+            className="text-xs flex items-center gap-1 transition-colors"
+            style={{ color: "#E9A020" }}
           >
             View all <ArrowRight size={12} />
           </button>
@@ -227,18 +231,18 @@ export default function ManagerDashboard() {
             <div key={a.id} className="card-purple p-4 flex items-center gap-4">
               <div
                 className="w-2 h-2 rounded-full shrink-0"
-                style={{ background: pColors[a.priority] ?? "#94A3B8", boxShadow: `0 0 6px ${pColors[a.priority] ?? "#94A3B8"}80` }}
+                style={{ background: pColors[a.priority] ?? "#9896B5", boxShadow: `0 0 6px ${pColors[a.priority] ?? "#9896B5"}80` }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{a.title}</p>
-                <p className="text-xs text-slate-500 mt-0.5">→ {a.assignee.name} · Due {new Date(a.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+                <p className="text-sm font-medium truncate" style={{ color: "#1E1B3A" }}>{a.title}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#9896B5" }}>→ {a.assignee.name} · Due {new Date(a.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
               </div>
               <span
                 className="badge capitalize shrink-0"
                 style={
                   a.status === "in_progress"
-                    ? { background: "rgba(139,92,246,0.15)", color: "#A78BFA", border: "1px solid rgba(139,92,246,0.3)" }
-                    : { background: "rgba(148,163,184,0.08)", color: "#64748B", border: "1px solid rgba(148,163,184,0.12)" }
+                    ? { background: "rgba(233,160,32,0.15)", color: "#E9A020", border: "1px solid rgba(233,160,32,0.3)" }
+                    : { background: "rgba(92,90,122,0.08)", color: "#5C5A7A", border: "1px solid rgba(92,90,122,0.15)" }
                 }
               >
                 {a.status.replace("_", " ")}

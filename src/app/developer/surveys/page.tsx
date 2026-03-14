@@ -17,12 +17,12 @@ import { CATEGORY_LABELS } from "@/lib/mockData";
 import { api } from "@/lib/api";
 
 const CAT_COLORS: Record<string, string> = {
-  code_coupling: "#06B6D4",
-  devops: "#F59E0B",
-  management: "#8B5CF6",
-  communication: "#10B981",
+  code_coupling: "#7C6BC4",
+  devops: "#B45309",
+  management: "#E9A020",
+  communication: "#059669",
   duplication: "#EC4899",
-  technical_debt: "#EF4444",
+  technical_debt: "#DC2626",
 };
 
 interface ApiSurveyListItem {
@@ -64,7 +64,7 @@ function SurveyModal({
   const q = survey.questions[idx];
   const total = survey.questions.length;
   const pct = (idx / total) * 100;
-  const accentColor = CAT_COLORS[survey.category] ?? "#06B6D4";
+  const accentColor = CAT_COLORS[survey.category] ?? "#7C6BC4";
 
   function select(answer: string) {
     setAnswers((prev) => ({ ...prev, [q.id]: answer }));
@@ -91,20 +91,20 @@ function SurveyModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
       <div
         className="w-full max-w-xl rounded-2xl overflow-hidden animate-slide-up"
-        style={{ background: "rgba(6,12,28,0.98)", border: `1px solid ${accentColor}30`, boxShadow: `0 0 40px ${accentColor}20` }}
+        style={{ background: "#FFFFFF", border: `1px solid ${accentColor}30`, boxShadow: `0 0 40px ${accentColor}20` }}
       >
         {/* Header */}
-        <div className="px-6 py-4 flex items-start justify-between" style={{ borderBottom: `1px solid rgba(255,255,255,0.06)` }}>
+        <div className="px-6 py-4 flex items-start justify-between" style={{ borderBottom: `1px solid rgba(124,107,196,0.12)` }}>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">
+            <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "#9896B5" }}>
               {CATEGORY_LABELS[survey.category] ?? survey.category}
             </p>
-            <h3 className="font-bold text-white text-sm">{survey.title}</h3>
+            <h3 className="font-bold text-sm" style={{ color: "#1E1B3A" }}>{survey.title}</h3>
           </div>
-          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors p-1">
+          <button onClick={onClose} className="transition-colors p-1" style={{ color: "#9896B5" }}>
             <X size={18} />
           </button>
         </div>
@@ -113,28 +113,28 @@ function SurveyModal({
           <div className="p-8 text-center">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ background: "rgba(16,185,129,0.15)", border: "2px solid #10B981", boxShadow: "0 0 20px rgba(16,185,129,0.3)" }}
+              style={{ background: "rgba(5,150,105,0.12)", border: "2px solid #059669", boxShadow: "0 0 20px rgba(5,150,105,0.2)" }}
             >
-              <CheckCircle2 size={28} className="text-green-400" />
+              <CheckCircle2 size={28} style={{ color: "#059669" }} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Survey Complete!</h3>
-            <p className="text-slate-400 text-sm mb-1">
+            <h3 className="text-xl font-bold mb-2" style={{ color: "#1E1B3A" }}>Survey Complete!</h3>
+            <p className="text-sm mb-1" style={{ color: "#5C5A7A" }}>
               Your responses have been recorded and shared with your manager.
             </p>
-            <p className="text-slate-500 text-xs mb-6">
+            <p className="text-xs mb-6" style={{ color: "#9896B5" }}>
               Expect personalised coaching notes within your next retrospective.
             </p>
             <div
               className="rounded-xl p-4 text-left mb-5"
-              style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)" }}
+              style={{ background: "rgba(124,107,196,0.06)", border: "1px solid rgba(124,107,196,0.15)" }}
             >
-              <p className="text-xs text-slate-400 mb-2 font-medium">Your mindset snapshot:</p>
+              <p className="text-xs mb-2 font-medium" style={{ color: "#5C5A7A" }}>Your mindset snapshot:</p>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500">Answers submitted</span>
-                <span className="text-cyan-400 font-bold">{total}</span>
+                <span style={{ color: "#9896B5" }}>Answers submitted</span>
+                <span className="font-bold" style={{ color: "#7C6BC4" }}>{total}</span>
               </div>
               <div className="flex items-center justify-between text-xs mt-1">
-                <span className="text-slate-500">Category focus</span>
+                <span style={{ color: "#9896B5" }}>Category focus</span>
                 <span style={{ color: accentColor }} className="font-medium">
                   {CATEGORY_LABELS[survey.category] ?? survey.category}
                 </span>
@@ -154,7 +154,7 @@ function SurveyModal({
               <div className="flex-1 progress-bar">
                 <div className="progress-fill" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${accentColor}80, ${accentColor})` }} />
               </div>
-              <span className="text-xs text-slate-500 shrink-0">{idx + 1} / {total}</span>
+              <span className="text-xs shrink-0" style={{ color: "#9896B5" }}>{idx + 1} / {total}</span>
             </div>
 
             <div
@@ -165,7 +165,7 @@ function SurveyModal({
               <p className="text-xs" style={{ color: `${accentColor}CC` }}>{q.insightLabel}</p>
             </div>
 
-            <p className="font-semibold text-white text-base mb-5 leading-relaxed">{q.text}</p>
+            <p className="font-semibold text-base mb-5 leading-relaxed" style={{ color: "#1E1B3A" }}>{q.text}</p>
 
             <div className="space-y-2.5">
               {q.options.map((opt, i) => {
@@ -182,12 +182,12 @@ function SurveyModal({
                       style={
                         isSelected
                           ? { borderColor: accentColor, background: accentColor }
-                          : { borderColor: "rgba(148,163,184,0.3)" }
+                          : { borderColor: "rgba(124,107,196,0.3)" }
                       }
                     >
                       {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                     </div>
-                    <span className="text-sm text-slate-300 text-left">{opt}</span>
+                    <span className="text-sm text-left" style={{ color: "#5C5A7A" }}>{opt}</span>
                   </button>
                 );
               })}
@@ -197,7 +197,8 @@ function SurveyModal({
               <button
                 onClick={prev}
                 disabled={idx === 0}
-                className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-white transition-colors disabled:opacity-30"
+                className="flex items-center gap-1.5 text-sm transition-colors disabled:opacity-30"
+                style={{ color: "#9896B5" }}
               >
                 <ChevronLeft size={15} /> Previous
               </button>
@@ -255,20 +256,20 @@ export default function MySurveys() {
   return (
     <div className="animate-fade-in">
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <ClipboardList size={22} className="text-cyan-400" />
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+          <ClipboardList size={22} style={{ color: "#7C6BC4" }} />
           My Surveys
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-sm mt-1" style={{ color: "#5C5A7A" }}>
           Complete your surveys to help your manager understand how you think and where you need support.
         </p>
       </div>
 
       <div className="flex gap-3 mb-7">
         {[
-          { label: "Pending", count: pending.length, color: "#F59E0B", icon: Clock },
-          { label: "Completed", count: done.length, color: "#10B981", icon: CheckCircle2 },
-          { label: "Total", count: surveys.length, color: "#06B6D4", icon: ClipboardList },
+          { label: "Pending", count: pending.length, color: "#B45309", icon: Clock },
+          { label: "Completed", count: done.length, color: "#059669", icon: CheckCircle2 },
+          { label: "Total", count: surveys.length, color: "#7C6BC4", icon: ClipboardList },
         ].map((s) => (
           <div
             key={s.label}
@@ -277,7 +278,7 @@ export default function MySurveys() {
           >
             <s.icon size={16} style={{ color: s.color }} />
             <div>
-              <p className="text-xs text-slate-500">{s.label}</p>
+              <p className="text-xs" style={{ color: "#9896B5" }}>{s.label}</p>
               <p className="text-lg font-bold" style={{ color: s.color }}>{s.count}</p>
             </div>
           </div>
@@ -286,27 +287,27 @@ export default function MySurveys() {
 
       {loading && (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={24} className="animate-spin text-cyan-400" />
+          <Loader2 size={24} className="animate-spin" style={{ color: "#7C6BC4" }} />
         </div>
       )}
 
       {!loading && pending.length === 0 && done.length === 0 && (
         <div
           className="rounded-xl p-10 text-center"
-          style={{ background: "rgba(6,182,212,0.03)", border: "1px dashed rgba(6,182,212,0.15)" }}
+          style={{ background: "rgba(124,107,196,0.05)", border: "1px dashed rgba(124,107,196,0.25)" }}
         >
-          <p className="text-slate-500 text-sm">No surveys yet. Submit a problem to generate one.</p>
+          <p className="text-sm" style={{ color: "#9896B5" }}>No surveys yet. Submit a problem to generate one.</p>
         </div>
       )}
 
       {pending.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-            <Clock size={14} className="text-amber-400" /> Pending Surveys
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+            <Clock size={14} style={{ color: "#B45309" }} /> Pending Surveys
           </h2>
           <div className="space-y-3">
             {pending.map((s) => {
-              const accent = CAT_COLORS[s.category] ?? "#06B6D4";
+              const accent = CAT_COLORS[s.category] ?? "#7C6BC4";
               return (
                 <div key={s.id} className="card-cyber p-5 flex items-start gap-4">
                   <div
@@ -322,8 +323,8 @@ export default function MySurveys() {
                         {CATEGORY_LABELS[s.category] ?? s.category}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <h3 className="font-semibold text-sm mb-1" style={{ color: "#1E1B3A" }}>{s.title}</h3>
+                    <div className="flex items-center gap-4 text-xs" style={{ color: "#9896B5" }}>
                       <span>{s.questionCount} questions</span>
                       <span>Due {new Date(s.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                     </div>
@@ -346,23 +347,23 @@ export default function MySurveys() {
 
       {done.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-green-400" /> Completed Surveys
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+            <CheckCircle2 size={14} style={{ color: "#059669" }} /> Completed Surveys
           </h2>
           <div className="space-y-3">
             {done.map((s) => {
-              const accent = CAT_COLORS[s.category] ?? "#10B981";
+              const accent = CAT_COLORS[s.category] ?? "#059669";
               return (
                 <div
                   key={s.id}
-                  className="rounded-xl p-5 flex items-start gap-4 opacity-70"
-                  style={{ background: "rgba(16,185,129,0.04)", border: "1px solid rgba(16,185,129,0.12)" }}
+                  className="rounded-xl p-5 flex items-start gap-4 opacity-80"
+                  style={{ background: "rgba(5,150,105,0.04)", border: "1px solid rgba(5,150,105,0.12)" }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}
+                    style={{ background: "rgba(5,150,105,0.1)", border: "1px solid rgba(5,150,105,0.2)" }}
                   >
-                    <CheckCircle2 size={18} className="text-green-400" />
+                    <CheckCircle2 size={18} style={{ color: "#059669" }} />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -371,12 +372,12 @@ export default function MySurveys() {
                         {CATEGORY_LABELS[s.category] ?? s.category}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-white text-sm mb-1">{s.title}</h3>
-                    <p className="text-xs text-slate-600">
+                    <h3 className="font-semibold text-sm mb-1" style={{ color: "#1E1B3A" }}>{s.title}</h3>
+                    <p className="text-xs" style={{ color: "#9896B5" }}>
                       Completed {s.completedAt ? new Date(s.completedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                     </p>
                   </div>
-                  <XCircle size={15} className="text-slate-700 shrink-0 mt-1" />
+                  <XCircle size={15} style={{ color: "#9896B5" }} className="shrink-0 mt-1" />
                 </div>
               );
             })}

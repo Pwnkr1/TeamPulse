@@ -41,25 +41,25 @@ export default function TeamMembers() {
   return (
     <div className="animate-fade-in">
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Users size={22} className="text-violet-400" />
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+          <Users size={22} style={{ color: "#E9A020" }} />
           Team Members
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-sm mt-1" style={{ color: "#5C5A7A" }}>
           Full roster of your engineering team with mindset scores, problem patterns, and survey progress.
         </p>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-violet-400" />
+          <Loader2 size={24} className="animate-spin" style={{ color: "#E9A020" }} />
         </div>
       ) : (
         <>
           <div className="card-purple overflow-hidden">
             <div
-              className="grid px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider"
-              style={{ gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+              className="grid px-5 py-3 text-xs font-semibold uppercase tracking-wider"
+              style={{ gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(124,107,196,0.12)", color: "#9896B5" }}
             >
               <span>Engineer</span>
               <span className="text-center">Mindset</span>
@@ -71,30 +71,30 @@ export default function TeamMembers() {
             {team.map((m, i) => {
               const sentiment = SENTIMENT_CONFIG[m.sentiment as keyof typeof SENTIMENT_CONFIG] ?? SENTIMENT_CONFIG.neutral;
               const pct = m.surveysTotal > 0 ? Math.round((m.surveysDone / m.surveysTotal) * 100) : 0;
-              const scoreColor = m.score >= 75 ? "#10B981" : m.score >= 50 ? "#F59E0B" : "#EF4444";
+              const scoreColor = m.score >= 75 ? "#059669" : m.score >= 50 ? "#B45309" : "#DC2626";
 
               return (
                 <div
                   key={m.id}
-                  className="grid px-5 py-4 items-center transition-colors hover:bg-white/[0.02]"
+                  className="grid px-5 py-4 items-center transition-colors"
                   style={{
                     gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr",
-                    borderBottom: i < team.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                    borderBottom: i < team.length - 1 ? "1px solid rgba(124,107,196,0.08)" : "none",
                   }}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-                      style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}
+                      style={{ background: "rgba(233,160,32,0.15)", border: "1px solid rgba(233,160,32,0.3)", color: "#E9A020" }}
                     >
                       {m.avatar ?? m.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">{m.name}</p>
-                      <p className="text-xs text-slate-500">{m.role} · {m.team}</p>
+                      <p className="text-sm font-semibold" style={{ color: "#1E1B3A" }}>{m.name}</p>
+                      <p className="text-xs" style={{ color: "#9896B5" }}>{m.role} · {m.team}</p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {m.categories.map((c) => (
-                          <span key={c} className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(6,182,212,0.08)", color: "#22D3EE", fontSize: 10 }}>
+                          <span key={c} className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(124,107,196,0.08)", color: "#7C6BC4", fontSize: 10 }}>
                             {CATEGORY_LABELS[c] ?? c}
                           </span>
                         ))}
@@ -110,15 +110,15 @@ export default function TeamMembers() {
 
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1.5">
-                      <Brain size={13} className="text-cyan-400" />
-                      <span className="text-sm font-semibold text-white">{m.problemsCount}</span>
+                      <Brain size={13} style={{ color: "#7C6BC4" }} />
+                      <span className="text-sm font-semibold" style={{ color: "#1E1B3A" }}>{m.problemsCount}</span>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="flex items-center gap-1.5 text-xs">
-                      <ClipboardList size={12} style={{ color: pct === 100 ? "#10B981" : "#F59E0B" }} />
-                      <span style={{ color: pct === 100 ? "#10B981" : "#F59E0B" }}>
+                      <ClipboardList size={12} style={{ color: pct === 100 ? "#059669" : "#B45309" }} />
+                      <span style={{ color: pct === 100 ? "#059669" : "#B45309" }}>
                         {m.surveysDone}/{m.surveysTotal}
                       </span>
                     </div>
@@ -138,7 +138,7 @@ export default function TeamMembers() {
                   <div className="flex justify-center">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black"
-                      style={{ background: `${scoreColor}12`, border: `2px solid ${scoreColor}40`, color: scoreColor, boxShadow: `0 0 10px ${scoreColor}25` }}
+                      style={{ background: `${scoreColor}12`, border: `2px solid ${scoreColor}40`, color: scoreColor, boxShadow: `0 0 10px ${scoreColor}20` }}
                     >
                       {m.score}
                     </div>
@@ -150,9 +150,9 @@ export default function TeamMembers() {
 
           <div className="mt-5 grid grid-cols-3 gap-4">
             {[
-              { label: "Avg Mindset Score", value: avgScore, color: "#8B5CF6", icon: TrendingUp },
-              { label: "Total Problems Logged", value: totalProblems, color: "#06B6D4", icon: Brain },
-              { label: "Surveys Completed", value: totalDone, color: "#10B981", icon: ClipboardList },
+              { label: "Avg Mindset Score", value: avgScore, color: "#E9A020", icon: TrendingUp },
+              { label: "Total Problems Logged", value: totalProblems, color: "#7C6BC4", icon: Brain },
+              { label: "Surveys Completed", value: totalDone, color: "#059669", icon: ClipboardList },
             ].map((s) => (
               <div key={s.label} className="card-purple p-4 flex items-center gap-4">
                 <div
@@ -163,7 +163,7 @@ export default function TeamMembers() {
                 </div>
                 <div>
                   <p className="text-xl font-black" style={{ color: s.color }}>{s.value}</p>
-                  <p className="text-xs text-slate-500">{s.label}</p>
+                  <p className="text-xs" style={{ color: "#9896B5" }}>{s.label}</p>
                 </div>
               </div>
             ))}

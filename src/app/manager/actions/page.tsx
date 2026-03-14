@@ -17,16 +17,16 @@ import { CATEGORY_LABELS } from "@/lib/mockData";
 import { api } from "@/lib/api";
 
 const STATUS_CONFIG = {
-  todo: { label: "To Do", color: "#94A3B8", bg: "rgba(148,163,184,0.1)", border: "rgba(148,163,184,0.2)", icon: Circle },
-  in_progress: { label: "In Progress", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.25)", icon: Clock },
-  done: { label: "Done", color: "#10B981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)", icon: CheckCircle2 },
-  completed: { label: "Done", color: "#10B981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)", icon: CheckCircle2 },
+  todo: { label: "To Do", color: "#9896B5", bg: "rgba(152,150,181,0.1)", border: "rgba(152,150,181,0.2)", icon: Circle },
+  in_progress: { label: "In Progress", color: "#E9A020", bg: "rgba(233,160,32,0.1)", border: "rgba(233,160,32,0.25)", icon: Clock },
+  done: { label: "Done", color: "#059669", bg: "rgba(5,150,105,0.1)", border: "rgba(5,150,105,0.25)", icon: CheckCircle2 },
+  completed: { label: "Done", color: "#059669", bg: "rgba(5,150,105,0.1)", border: "rgba(5,150,105,0.25)", icon: CheckCircle2 },
 };
 
 const PRIORITY_CONFIG = {
-  high: { color: "#EF4444", label: "High" },
-  medium: { color: "#F59E0B", label: "Medium" },
-  low: { color: "#10B981", label: "Low" },
+  high: { color: "#DC2626", label: "High" },
+  medium: { color: "#B45309", label: "Medium" },
+  low: { color: "#059669", label: "Low" },
 };
 
 type StatusKey = "todo" | "in_progress" | "done";
@@ -53,7 +53,7 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
   return (
     <div
       className="rounded-xl overflow-hidden transition-all"
-      style={{ background: "rgba(8,6,28,0.85)", border: `1px solid ${statusKey === "done" ? "rgba(16,185,129,0.15)" : "rgba(139,92,246,0.15)"}` }}
+      style={{ background: "#FFFFFF", border: `1px solid ${statusKey === "done" ? "rgba(5,150,105,0.2)" : "rgba(233,160,32,0.2)"}` }}
     >
       <div className="p-4 flex items-start gap-3">
         <div
@@ -75,9 +75,9 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
             </div>
           </div>
 
-          <p className="text-sm font-semibold text-white mb-1">{item.title}</p>
+          <p className="text-sm font-semibold mb-1" style={{ color: "#1E1B3A" }}>{item.title}</p>
 
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-4 text-xs" style={{ color: "#9896B5" }}>
             <span className="flex items-center gap-1">
               <User size={11} /> {item.assignee.name}
             </span>
@@ -85,7 +85,7 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
               <Calendar size={11} />
               Due {new Date(item.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
-            {item.sourceRef && <span className="text-slate-700">Source: {item.sourceRef}</span>}
+            {item.sourceRef && <span style={{ color: "#9896B5" }}>Source: {item.sourceRef}</span>}
           </div>
         </div>
 
@@ -95,9 +95,9 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
               onClick={() => onStatusChange(item.id, statusKey === "todo" ? "in_progress" : "done")}
               className="text-xs px-3 py-1.5 rounded-lg transition-all font-medium"
               style={{
-                background: statusKey === "todo" ? "rgba(139,92,246,0.12)" : "rgba(16,185,129,0.12)",
-                color: statusKey === "todo" ? "#A78BFA" : "#34D399",
-                border: `1px solid ${statusKey === "todo" ? "rgba(139,92,246,0.25)" : "rgba(16,185,129,0.25)"}`,
+                background: statusKey === "todo" ? "rgba(233,160,32,0.10)" : "rgba(5,150,105,0.10)",
+                color: statusKey === "todo" ? "#E9A020" : "#059669",
+                border: `1px solid ${statusKey === "todo" ? "rgba(233,160,32,0.25)" : "rgba(5,150,105,0.25)"}`,
               }}
             >
               {statusKey === "todo" ? "Start" : "Complete"}
@@ -105,7 +105,8 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
           )}
           <button
             onClick={() => setOpen((o) => !o)}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/05 transition-all"
+            className="p-1.5 rounded-lg transition-all"
+            style={{ color: "#9896B5" }}
           >
             <ChevronDown size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
@@ -113,8 +114,8 @@ function ActionCard({ item, onStatusChange }: { item: ApiAction; onStatusChange:
       </div>
 
       {open && (
-        <div className="px-4 pb-4 border-t" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-          <p className="text-xs text-slate-400 leading-relaxed pt-3">{item.description}</p>
+        <div className="px-4 pb-4 border-t" style={{ borderColor: "rgba(124,107,196,0.12)" }}>
+          <p className="text-xs leading-relaxed pt-3" style={{ color: "#5C5A7A" }}>{item.description}</p>
         </div>
       )}
     </div>
@@ -140,7 +141,6 @@ export default function RetroActions() {
     try {
       await api.patch(`/api/actions/${id}`, { status });
     } catch {
-      // revert on error
       api.get<{ actions: ApiAction[] }>("/api/actions").then((d) => setItems(d.actions)).catch(() => {});
     }
   }
@@ -161,20 +161,20 @@ export default function RetroActions() {
   return (
     <div className="animate-fade-in">
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Zap size={22} className="text-violet-400" />
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+          <Zap size={22} style={{ color: "#E9A020" }} />
           Retrospective Actions
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-sm mt-1" style={{ color: "#5C5A7A" }}>
           AI-generated action items from survey responses and problem patterns. Track them to sprint completion.
         </p>
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-6">
         {[
-          { label: "To Do", count: todo, color: "#94A3B8", bg: "rgba(148,163,184,0.08)", key: "todo" as StatusKey },
-          { label: "In Progress", count: inProgress, color: "#8B5CF6", bg: "rgba(139,92,246,0.08)", key: "in_progress" as StatusKey },
-          { label: "Done", count: done, color: "#10B981", bg: "rgba(16,185,129,0.08)", key: "done" as StatusKey },
+          { label: "To Do", count: todo, color: "#9896B5", bg: "rgba(152,150,181,0.08)", key: "todo" as StatusKey },
+          { label: "In Progress", count: inProgress, color: "#E9A020", bg: "rgba(233,160,32,0.08)", key: "in_progress" as StatusKey },
+          { label: "Done", count: done, color: "#059669", bg: "rgba(5,150,105,0.08)", key: "done" as StatusKey },
         ].map((s) => (
           <div
             key={s.label}
@@ -183,13 +183,13 @@ export default function RetroActions() {
             onClick={() => setFilter(s.key)}
           >
             <p className="text-2xl font-black mb-0.5" style={{ color: s.color }}>{s.count}</p>
-            <p className="text-xs text-slate-500">{s.label}</p>
+            <p className="text-xs" style={{ color: "#9896B5" }}>{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="flex items-center gap-2 mb-5">
-        <Filter size={14} className="text-slate-500" />
+        <Filter size={14} style={{ color: "#9896B5" }} />
         {(["all", "todo", "in_progress", "done"] as const).map((f) => (
           <button
             key={f}
@@ -197,29 +197,29 @@ export default function RetroActions() {
             className="text-xs px-3 py-1.5 rounded-lg transition-all font-medium capitalize"
             style={
               filter === f
-                ? { background: "rgba(139,92,246,0.15)", color: "#A78BFA", border: "1px solid rgba(139,92,246,0.3)" }
-                : { background: "rgba(255,255,255,0.03)", color: "rgba(148,163,184,0.6)", border: "1px solid rgba(255,255,255,0.06)" }
+                ? { background: "rgba(233,160,32,0.12)", color: "#E9A020", border: "1px solid rgba(233,160,32,0.3)" }
+                : { background: "rgba(124,107,196,0.05)", color: "#9896B5", border: "1px solid rgba(124,107,196,0.12)" }
             }
           >
             {f.replace("_", " ")}
           </button>
         ))}
-        <span className="ml-auto text-xs text-slate-600">{filtered.length} items</span>
+        <span className="ml-auto text-xs" style={{ color: "#9896B5" }}>{filtered.length} items</span>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={24} className="animate-spin text-violet-400" />
+          <Loader2 size={24} className="animate-spin" style={{ color: "#E9A020" }} />
         </div>
       ) : (
         <div className="space-y-3">
           {filtered.length === 0 && (
             <div
               className="rounded-xl p-10 text-center"
-              style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}
+              style={{ background: "rgba(124,107,196,0.05)", border: "1px dashed rgba(124,107,196,0.25)" }}
             >
-              <CheckCircle2 size={32} className="text-green-400 mx-auto mb-3" />
-              <p className="text-slate-400 text-sm">No items in this category.</p>
+              <CheckCircle2 size={32} style={{ color: "#059669" }} className="mx-auto mb-3" />
+              <p className="text-sm" style={{ color: "#9896B5" }}>No items in this category.</p>
             </div>
           )}
           {filtered.map((item) => (
@@ -230,14 +230,14 @@ export default function RetroActions() {
 
       <div
         className="mt-8 rounded-xl p-4"
-        style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.12)" }}
+        style={{ background: "rgba(233,160,32,0.06)", border: "1px solid rgba(233,160,32,0.15)" }}
       >
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Priority Legend</p>
+        <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#9896B5" }}>Priority Legend</p>
         <div className="flex gap-6">
           {(["high", "medium", "low"] as const).map((p) => (
             <div key={p} className="flex items-center gap-2 text-xs">
               <div className="w-3 h-3 rounded-full" style={{ background: PRIORITY_CONFIG[p].color }} />
-              <span className="text-slate-400 capitalize">{p} — {p === "high" ? "Address this sprint" : p === "medium" ? "Address this month" : "Backlog ok"}</span>
+              <span className="capitalize" style={{ color: "#5C5A7A" }}>{p} — {p === "high" ? "Address this sprint" : p === "medium" ? "Address this month" : "Backlog ok"}</span>
             </div>
           ))}
         </div>

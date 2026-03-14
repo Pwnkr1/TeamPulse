@@ -50,13 +50,13 @@ function MemberCard({ m }: { m: TeamMember }) {
       >
         <div
           className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-          style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}
+          style={{ background: "rgba(233,160,32,0.15)", border: "1px solid rgba(233,160,32,0.3)", color: "#E9A020" }}
         >
           {m.avatar ?? m.name.slice(0, 2).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="font-semibold text-white text-sm">{m.name}</p>
+            <p className="font-semibold text-sm" style={{ color: "#1E1B3A" }}>{m.name}</p>
             <span
               className="badge"
               style={{ background: sentiment.bg, color: sentiment.color, border: `1px solid ${sentiment.color}30` }}
@@ -64,50 +64,50 @@ function MemberCard({ m }: { m: TeamMember }) {
               {sentiment.label}
             </span>
           </div>
-          <p className="text-xs text-slate-500">{m.role} · {m.team}</p>
+          <p className="text-xs" style={{ color: "#9896B5" }}>{m.role} · {m.team}</p>
         </div>
         <div className="flex items-center gap-5 shrink-0">
           <div className="text-center">
             <p
               className="text-xl font-black"
-              style={{ color: m.score >= 75 ? "#10B981" : m.score >= 50 ? "#F59E0B" : "#EF4444" }}
+              style={{ color: m.score >= 75 ? "#059669" : m.score >= 50 ? "#B45309" : "#DC2626" }}
             >
               {m.score}
             </p>
-            <p className="text-xs text-slate-600">score</p>
+            <p className="text-xs" style={{ color: "#9896B5" }}>score</p>
           </div>
-          {open ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
+          {open ? <ChevronUp size={16} style={{ color: "#9896B5" }} /> : <ChevronDown size={16} style={{ color: "#9896B5" }} />}
         </div>
       </button>
 
       {open && (
-        <div className="px-5 pb-5 border-t" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+        <div className="px-5 pb-5 border-t" style={{ borderColor: "rgba(124,107,196,0.12)" }}>
           <div className="pt-4 grid grid-cols-3 gap-4 mb-4">
-            <div className="rounded-xl p-3 text-center" style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.12)" }}>
-              <Brain size={14} className="text-cyan-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-white">{m.problemsCount}</p>
-              <p className="text-xs text-slate-500">Problems</p>
+            <div className="rounded-xl p-3 text-center" style={{ background: "rgba(124,107,196,0.06)", border: "1px solid rgba(124,107,196,0.12)" }}>
+              <Brain size={14} style={{ color: "#7C6BC4" }} className="mx-auto mb-1" />
+              <p className="text-lg font-bold" style={{ color: "#1E1B3A" }}>{m.problemsCount}</p>
+              <p className="text-xs" style={{ color: "#9896B5" }}>Problems</p>
             </div>
-            <div className="rounded-xl p-3 text-center" style={{ background: "rgba(139,92,246,0.06)", border: "1px solid rgba(139,92,246,0.12)" }}>
-              <ClipboardList size={14} className="text-violet-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-white">{m.surveysDone}/{m.surveysTotal}</p>
-              <p className="text-xs text-slate-500">Surveys</p>
+            <div className="rounded-xl p-3 text-center" style={{ background: "rgba(233,160,32,0.06)", border: "1px solid rgba(233,160,32,0.12)" }}>
+              <ClipboardList size={14} style={{ color: "#E9A020" }} className="mx-auto mb-1" />
+              <p className="text-lg font-bold" style={{ color: "#1E1B3A" }}>{m.surveysDone}/{m.surveysTotal}</p>
+              <p className="text-xs" style={{ color: "#9896B5" }}>Surveys</p>
             </div>
             <div className="rounded-xl p-3 text-center" style={{ background: `${sentiment.color}0A`, border: `1px solid ${sentiment.color}20` }}>
               <div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: sentiment.color }} />
               <p className="text-lg font-bold" style={{ color: sentiment.color }}>{pct}%</p>
-              <p className="text-xs text-slate-500">Completion</p>
+              <p className="text-xs" style={{ color: "#9896B5" }}>Completion</p>
             </div>
           </div>
 
           <div className="mb-4">
-            <p className="text-xs text-slate-500 mb-2 font-medium">Problem Areas</p>
+            <p className="text-xs mb-2 font-medium" style={{ color: "#9896B5" }}>Problem Areas</p>
             <div className="flex flex-wrap gap-2">
               {m.categories.length > 0
                 ? m.categories.map((cat) => (
                     <span key={cat} className="badge badge-purple">{CATEGORY_LABELS[cat] ?? cat}</span>
                   ))
-                : <span className="text-xs text-slate-600">None yet</span>
+                : <span className="text-xs" style={{ color: "#9896B5" }}>None yet</span>
               }
             </div>
           </div>
@@ -116,8 +116,8 @@ function MemberCard({ m }: { m: TeamMember }) {
             className="rounded-xl p-4"
             style={{ background: `${sentiment.color}08`, border: `1px solid ${sentiment.color}18` }}
           >
-            <p className="text-xs text-slate-400 mb-1 font-medium uppercase tracking-wider">AI Coaching Recommendation</p>
-            <p className="text-sm text-slate-300 leading-relaxed">{SCORE_INSIGHTS[m.sentiment] ?? SCORE_INSIGHTS.neutral}</p>
+            <p className="text-xs mb-1 font-medium uppercase tracking-wider" style={{ color: "#9896B5" }}>AI Coaching Recommendation</p>
+            <p className="text-sm leading-relaxed" style={{ color: "#5C5A7A" }}>{SCORE_INSIGHTS[m.sentiment] ?? SCORE_INSIGHTS.neutral}</p>
           </div>
         </div>
       )}
@@ -149,38 +149,39 @@ export default function TeamInsights() {
   return (
     <div className="animate-fade-in">
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <LineIcon size={22} className="text-violet-400" />
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+          <LineIcon size={22} style={{ color: "#E9A020" }} />
           Team Insights
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-sm mt-1" style={{ color: "#5C5A7A" }}>
           Deep-dive into individual engineer mindset scores, problem patterns, and AI coaching recommendations.
         </p>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-violet-400" />
+          <Loader2 size={24} className="animate-spin" style={{ color: "#E9A020" }} />
         </div>
       ) : (
         <>
           {/* Survey completion trend */}
           <div className="card-purple p-5 mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <LineIcon size={15} className="text-violet-400" />
-              <p className="text-sm font-semibold text-white">Survey Completion Trend</p>
+              <LineIcon size={15} style={{ color: "#E9A020" }} />
+              <p className="text-sm font-semibold" style={{ color: "#1E1B3A" }}>Survey Completion Trend</p>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={trend} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="week" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(124,107,196,0.12)" />
+                <XAxis dataKey="week" tick={{ fill: "#9896B5", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#9896B5", fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(6,12,28,0.95)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#E2E8F0" }}
+                  contentStyle={{ background: "#FFFFFF", border: "1px solid rgba(233,160,32,0.3)", borderRadius: 8, fontSize: 12 }}
+                  labelStyle={{ color: "#1E1B3A" }}
+                  itemStyle={{ color: "#1E1B3A" }}
                 />
-                <Line type="monotone" dataKey="sent" stroke="rgba(139,92,246,0.4)" strokeWidth={2} dot={false} name="Sent" />
-                <Line type="monotone" dataKey="completed" stroke="#8B5CF6" strokeWidth={2.5} dot={{ fill: "#8B5CF6", strokeWidth: 0, r: 4 }} name="Completed" />
+                <Line type="monotone" dataKey="sent" stroke="rgba(124,107,196,0.5)" strokeWidth={2} dot={false} name="Sent" />
+                <Line type="monotone" dataKey="completed" stroke="#E9A020" strokeWidth={2.5} dot={{ fill: "#E9A020", strokeWidth: 0, r: 4 }} name="Completed" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -199,7 +200,7 @@ export default function TeamInsights() {
                     <Users size={16} style={{ color: cfg.color }} />
                   </div>
                   <p className="text-xl font-black" style={{ color: cfg.color }}>{count}</p>
-                  <p className="text-xs text-slate-500 capitalize">{cfg.label}</p>
+                  <p className="text-xs capitalize" style={{ color: "#9896B5" }}>{cfg.label}</p>
                 </div>
               );
             })}
@@ -207,20 +208,20 @@ export default function TeamInsights() {
 
           {/* Score leaderboard */}
           <div className="card-purple p-5 mb-6">
-            <p className="text-sm font-semibold text-white mb-4">Mindset Score Ranking</p>
+            <p className="text-sm font-semibold mb-4" style={{ color: "#1E1B3A" }}>Mindset Score Ranking</p>
             <div className="space-y-3">
               {byScore.map((m, i) => {
-                const col = m.score >= 75 ? "#10B981" : m.score >= 50 ? "#F59E0B" : "#EF4444";
+                const col = m.score >= 75 ? "#059669" : m.score >= 50 ? "#B45309" : "#DC2626";
                 return (
                   <div key={m.id} className="flex items-center gap-3">
-                    <span className="text-xs text-slate-600 w-4 text-right shrink-0">{i + 1}</span>
+                    <span className="text-xs w-4 text-right shrink-0" style={{ color: "#9896B5" }}>{i + 1}</span>
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                      style={{ background: "rgba(139,92,246,0.12)", color: "#A78BFA" }}
+                      style={{ background: "rgba(233,160,32,0.12)", color: "#E9A020" }}
                     >
                       {m.avatar ?? m.name.slice(0, 2).toUpperCase()}
                     </div>
-                    <p className="text-sm text-white flex-1 truncate">{m.name}</p>
+                    <p className="text-sm flex-1 truncate" style={{ color: "#1E1B3A" }}>{m.name}</p>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="w-24 progress-bar">
                         <div className="progress-fill" style={{ width: `${m.score}%`, background: `linear-gradient(90deg, ${col}80, ${col})` }} />
@@ -235,7 +236,7 @@ export default function TeamInsights() {
 
           {/* Individual cards */}
           <div>
-            <p className="text-sm font-semibold text-white mb-4">Individual Profiles</p>
+            <p className="text-sm font-semibold mb-4" style={{ color: "#1E1B3A" }}>Individual Profiles</p>
             <div className="space-y-3">
               {team.map((m) => <MemberCard key={m.id} m={m} />)}
             </div>

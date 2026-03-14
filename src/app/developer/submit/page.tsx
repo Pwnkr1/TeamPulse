@@ -53,7 +53,6 @@ export default function SubmitProblem() {
     setStage("classifying");
     setAnalysisVisible(false);
     try {
-      // Submit to backend — pipeline runs async
       await api.post("/api/problems", { category, urgency, description });
     } catch {
       // Continue with UX animation even if API fails
@@ -73,11 +72,11 @@ export default function SubmitProblem() {
     <div className="animate-fade-in">
       {/* Header */}
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Brain size={22} className="text-cyan-400" />
+        <h1 className="text-2xl font-bold flex items-center gap-2" style={{ color: "#1E1B3A" }}>
+          <Brain size={22} style={{ color: "#7C6BC4" }} />
           Submit a Problem
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-sm mt-1" style={{ color: "#5C5A7A" }}>
           Describe your blocker honestly. The AI agent will find solutions and build a survey to help shift your mindset.
         </p>
       </div>
@@ -87,7 +86,7 @@ export default function SubmitProblem() {
         <div className="col-span-2 space-y-4">
           {/* Category */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Problem Category</label>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: "#5C5A7A" }}>Problem Category</label>
             <div className="relative">
               <button
                 type="button"
@@ -96,26 +95,28 @@ export default function SubmitProblem() {
               >
                 <span className="flex items-center gap-2">
                   <span>{selectedCat.icon}</span>
-                  <span className="text-white">{selectedCat.label}</span>
+                  <span style={{ color: "#1E1B3A" }}>{selectedCat.label}</span>
                 </span>
-                <ChevronDown size={14} className={`text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                <ChevronDown size={14} style={{ color: "#9896B5" }} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {dropdownOpen && (
                 <div
                   className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-50"
-                  style={{ background: "rgba(6,12,28,0.98)", border: "1px solid rgba(6,182,212,0.2)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
+                  style={{ background: "#FFFFFF", border: "1px solid rgba(124,107,196,0.2)", boxShadow: "0 8px 32px rgba(124,107,196,0.15)" }}
                 >
                   {CATEGORIES.map((cat) => (
                     <button
                       key={cat.value}
                       onClick={() => { setCategory(cat.value); setDropdownOpen(false); setStage("idle"); setAnalysisVisible(false); }}
-                      className="w-full text-left px-4 py-3 hover:bg-cyan-400/08 transition-colors flex items-start gap-3"
-                      style={category === cat.value ? { background: "rgba(6,182,212,0.1)" } : {}}
+                      className="w-full text-left px-4 py-3 transition-colors flex items-start gap-3"
+                      style={category === cat.value ? { background: "rgba(124,107,196,0.1)" } : { background: "transparent" }}
+                      onMouseEnter={(e) => { if (category !== cat.value) e.currentTarget.style.background = "rgba(124,107,196,0.05)"; }}
+                      onMouseLeave={(e) => { if (category !== cat.value) e.currentTarget.style.background = "transparent"; }}
                     >
                       <span className="text-lg mt-0.5">{cat.icon}</span>
                       <div>
-                        <p className="text-sm font-medium text-white">{cat.label}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{cat.desc}</p>
+                        <p className="text-sm font-medium" style={{ color: "#1E1B3A" }}>{cat.label}</p>
+                        <p className="text-xs mt-0.5" style={{ color: "#9896B5" }}>{cat.desc}</p>
                       </div>
                     </button>
                   ))}
@@ -126,10 +127,10 @@ export default function SubmitProblem() {
 
           {/* Urgency */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Urgency Level</label>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: "#5C5A7A" }}>Urgency Level</label>
             <div className="flex gap-2">
               {(["low", "medium", "high"] as const).map((u) => {
-                const colors = { low: "#10B981", medium: "#F59E0B", high: "#EF4444" };
+                const colors = { low: "#059669", medium: "#B45309", high: "#DC2626" };
                 const active = urgency === u;
                 return (
                   <button
@@ -139,7 +140,7 @@ export default function SubmitProblem() {
                     style={
                       active
                         ? { background: `${colors[u]}20`, color: colors[u], border: `1px solid ${colors[u]}50` }
-                        : { background: "rgba(255,255,255,0.03)", color: "rgba(148,163,184,0.6)", border: "1px solid rgba(255,255,255,0.06)" }
+                        : { background: "rgba(124,107,196,0.05)", color: "#9896B5", border: "1px solid rgba(124,107,196,0.12)" }
                     }
                   >
                     {u}
@@ -151,7 +152,7 @@ export default function SubmitProblem() {
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+            <label className="block text-xs font-medium mb-1.5" style={{ color: "#5C5A7A" }}>
               Describe your problem <span className="text-red-400">*</span>
             </label>
             <textarea
@@ -161,7 +162,7 @@ export default function SubmitProblem() {
               placeholder="Be specific — explain what you tried, what broke, how long you've been blocked, and what the impact is…"
               className="input-cyber px-4 py-3 text-sm resize-none"
             />
-            <p className="text-xs text-slate-600 mt-1 text-right">{description.length} chars</p>
+            <p className="text-xs mt-1 text-right" style={{ color: "#9896B5" }}>{description.length} chars</p>
           </div>
 
           {/* Submit */}
@@ -199,21 +200,21 @@ export default function SubmitProblem() {
                       className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                       style={
                         isDone
-                          ? { background: "rgba(16,185,129,0.2)", border: "1px solid #10B981" }
+                          ? { background: "rgba(5,150,105,0.15)", border: "1px solid #059669" }
                           : isActive
-                          ? { background: "rgba(6,182,212,0.2)", border: "1px solid #06B6D4" }
-                          : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }
+                          ? { background: "rgba(124,107,196,0.15)", border: "1px solid #7C6BC4" }
+                          : { background: "rgba(124,107,196,0.05)", border: "1px solid rgba(124,107,196,0.12)" }
                       }
                     >
                       {isDone ? (
-                        <CheckCircle2 size={11} style={{ color: "#10B981" }} />
+                        <CheckCircle2 size={11} style={{ color: "#059669" }} />
                       ) : isActive ? (
-                        <Loader2 size={11} className="animate-spin" style={{ color: "#06B6D4" }} />
+                        <Loader2 size={11} className="animate-spin" style={{ color: "#7C6BC4" }} />
                       ) : (
-                        <span style={{ color: "rgba(148,163,184,0.3)" }}>·</span>
+                        <span style={{ color: "#9896B5" }}>·</span>
                       )}
                     </div>
-                    <span style={{ color: isDone ? "#10B981" : isActive ? "#06B6D4" : "rgba(148,163,184,0.4)" }}>
+                    <span style={{ color: isDone ? "#059669" : isActive ? "#7C6BC4" : "#9896B5" }}>
                       {["Classify problem", "Retrieve similar cases", "Generate survey"][i]}
                     </span>
                   </div>
@@ -228,10 +229,10 @@ export default function SubmitProblem() {
           {!analysisVisible && stage === "idle" && (
             <div
               className="h-full min-h-[300px] rounded-xl flex flex-col items-center justify-center gap-3 text-center px-8"
-              style={{ background: "rgba(6,182,212,0.03)", border: "1px dashed rgba(6,182,212,0.15)" }}
+              style={{ background: "rgba(124,107,196,0.05)", border: "1px dashed rgba(124,107,196,0.25)" }}
             >
-              <Brain size={36} className="text-cyan-900" />
-              <p className="text-slate-600 text-sm">
+              <Brain size={36} style={{ color: "#A99DD6" }} />
+              <p className="text-sm" style={{ color: "#9896B5" }}>
                 Submit your problem description on the left to see AI analysis, industry case studies, and your generated survey here.
               </p>
             </div>
@@ -240,7 +241,7 @@ export default function SubmitProblem() {
           {isRunning && (
             <div
               className="rounded-xl p-6 space-y-4 min-h-[300px] flex flex-col justify-center"
-              style={{ background: "rgba(6,12,28,0.6)", border: "1px solid rgba(6,182,212,0.15)" }}
+              style={{ background: "rgba(124,107,196,0.06)", border: "1px solid rgba(124,107,196,0.18)" }}
             >
               {[1, 2, 3].map((i) => (
                 <div key={i} className="space-y-2">
@@ -248,7 +249,7 @@ export default function SubmitProblem() {
                   <div className="skeleton h-3 rounded" style={{ width: `${40 + i * 8}%` }} />
                 </div>
               ))}
-              <p className="text-xs text-cyan-400/60 animate-pulse text-center mt-4">{STAGE_MESSAGES[stage]}</p>
+              <p className="text-xs animate-pulse text-center mt-4" style={{ color: "#7C6BC4" }}>{STAGE_MESSAGES[stage]}</p>
             </div>
           )}
 
@@ -257,38 +258,38 @@ export default function SubmitProblem() {
               {/* Classification */}
               <div className="card-cyber p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <FileSearch size={15} className="text-cyan-400" />
-                  <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Problem Classification</span>
+                  <FileSearch size={15} style={{ color: "#7C6BC4" }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#5C5A7A" }}>Problem Classification</span>
                 </div>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{selectedCat.icon}</span>
                   <div>
-                    <p className="font-semibold text-white">{selectedCat.label}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{selectedCat.desc}</p>
+                    <p className="font-semibold" style={{ color: "#1E1B3A" }}>{selectedCat.label}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#5C5A7A" }}>{selectedCat.desc}</p>
                   </div>
                   <div className="ml-auto flex items-center gap-1.5">
-                    <AlertTriangle size={13} style={{ color: urgency === "high" ? "#EF4444" : urgency === "medium" ? "#F59E0B" : "#10B981" }} />
+                    <AlertTriangle size={13} style={{ color: urgency === "high" ? "#DC2626" : urgency === "medium" ? "#B45309" : "#059669" }} />
                     <span
                       className="text-xs font-medium capitalize"
-                      style={{ color: urgency === "high" ? "#EF4444" : urgency === "medium" ? "#F59E0B" : "#10B981" }}
+                      style={{ color: urgency === "high" ? "#DC2626" : urgency === "medium" ? "#B45309" : "#059669" }}
                     >
                       {urgency} urgency
                     </span>
                   </div>
                 </div>
                 <div
-                  className="rounded-lg px-3 py-2 text-xs text-slate-400"
-                  style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.1)" }}
+                  className="rounded-lg px-3 py-2 text-xs"
+                  style={{ background: "rgba(124,107,196,0.06)", border: "1px solid rgba(124,107,196,0.12)", color: "#5C5A7A" }}
                 >
-                  AI confidence: <span className="text-cyan-400 font-semibold">94%</span> — this problem pattern is common in mid-size engineering teams (30–150 engineers).
+                  AI confidence: <span style={{ color: "#7C6BC4" }} className="font-semibold">94%</span> — this problem pattern is common in mid-size engineering teams (30–150 engineers).
                 </div>
               </div>
 
               {/* Similar Cases */}
               <div className="card-cyber p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <ExternalLink size={15} className="text-cyan-400" />
-                  <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  <ExternalLink size={15} style={{ color: "#7C6BC4" }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#5C5A7A" }}>
                     Industry Cases Found ({cases.length})
                   </span>
                 </div>
@@ -297,24 +298,24 @@ export default function SubmitProblem() {
                     <div
                       key={i}
                       className="rounded-xl p-4"
-                      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+                      style={{ background: "rgba(124,107,196,0.05)", border: "1px solid rgba(124,107,196,0.12)" }}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-bold text-white">{c.company}</span>
+                        <span className="text-sm font-bold" style={{ color: "#1E1B3A" }}>{c.company}</span>
                         <span className="badge badge-cyan">Case Study</span>
                       </div>
-                      <p className="text-xs text-slate-500 mb-2">
-                        <span className="text-slate-400 font-medium">Problem:</span> {c.problem}
+                      <p className="text-xs mb-2" style={{ color: "#9896B5" }}>
+                        <span className="font-medium" style={{ color: "#5C5A7A" }}>Problem:</span> {c.problem}
                       </p>
-                      <p className="text-xs text-slate-500 mb-2">
-                        <span className="text-slate-400 font-medium">Solution:</span> {c.solution}
+                      <p className="text-xs mb-2" style={{ color: "#9896B5" }}>
+                        <span className="font-medium" style={{ color: "#5C5A7A" }}>Solution:</span> {c.solution}
                       </p>
                       <div
                         className="rounded-lg px-3 py-1.5 text-xs"
-                        style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.15)" }}
+                        style={{ background: "rgba(5,150,105,0.08)", border: "1px solid rgba(5,150,105,0.15)" }}
                       >
-                        <span className="text-green-400 font-medium">Outcome: </span>
-                        <span className="text-slate-400">{c.outcome}</span>
+                        <span style={{ color: "#059669" }} className="font-medium">Outcome: </span>
+                        <span style={{ color: "#5C5A7A" }}>{c.outcome}</span>
                       </div>
                     </div>
                   ))}
@@ -324,15 +325,15 @@ export default function SubmitProblem() {
               {/* Survey generated */}
               <div
                 className="rounded-xl p-5"
-                style={{ background: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.2)" }}
+                style={{ background: "rgba(5,150,105,0.06)", border: "1px solid rgba(5,150,105,0.2)" }}
               >
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 size={20} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 size={20} style={{ color: "#059669" }} className="mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-white mb-0.5">Survey Generated!</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-semibold mb-0.5" style={{ color: "#1E1B3A" }}>Survey Generated!</p>
+                    <p className="text-xs" style={{ color: "#5C5A7A" }}>
                       A personalised mindset survey has been added to your{" "}
-                      <span className="text-cyan-400">My Surveys</span> page. Complete it to help your manager understand
+                      <span style={{ color: "#7C6BC4" }}>My Surveys</span> page. Complete it to help your manager understand
                       your perspective and receive targeted coaching.
                     </p>
                     <button

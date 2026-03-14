@@ -19,14 +19,14 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#03060F" }}>
-        <div className="w-8 h-8 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg, #EDE8FF 0%, #FFF8E6 100%)" }}>
+        <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "rgba(233,160,32,0.3)", borderTopColor: "#E9A020" }} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "#03060F" }}>
+    <div className="min-h-screen">
       <AnimatedBg variant="purple" />
       <Sidebar user={user} />
       <main className="ml-60 min-h-screen relative z-10">
